@@ -36,11 +36,14 @@ function setMode(mode, persist = true) {
   currentMode = mode;
   const item = modes[mode];
   body.dataset.mode = mode;
-  logos.forEach(logo => { logo.src = item.logo; });
+  const demoModeControl = document.querySelector('#demoMode');
+  if (demoModeControl) demoModeControl.value = mode;
+  document.querySelectorAll('[data-mode-logo]').forEach(logo => { logo.src = item.logo; });
   buttons.forEach(button => {
     const selected = button.dataset.mode === mode;
     button.classList.toggle('active', selected);
     button.setAttribute('aria-selected', String(selected));
+    button.tabIndex = selected ? 0 : -1;
   });
   moveModeIndicator(document.querySelector(`.mode-btn[data-mode="${mode}"]`));
   document.querySelector('#modePanel').setAttribute('aria-labelledby', `tab-${mode}`);
@@ -66,41 +69,6 @@ buttons.forEach((button, index) => {
 });
 setMode(sessionStorage.getItem('nexus-site-mode') || 'default', false);
 window.addEventListener('resize', () => moveModeIndicator(buttons.find(button => button.dataset.mode === body.dataset.mode)));
-
-// A brief, skippable first-visit tour. It only runs once in this tab session.
-const tutorial = document.querySelector('#modeTutorial');
-const tutorialText = document.querySelector('#tutorialText');
-const skipTour = document.querySelector('#skipTour');
-let tourTimer;
-function finishTour() {
-  clearTimeout(tourTimer);
-  tutorial.classList.remove('tour-visible');
-  sessionStorage.setItem('nexus-mode-tour-seen', '1');
-  document.querySelector('#tourCaption').classList.add('visible');
-}
-skipTour.addEventListener('click', finishTour);
-if (!reduceMotion && !sessionStorage.getItem('nexus-mode-tour-seen')) {
-  const modeSection = document.querySelector('#modes');
-  const observer = new IntersectionObserver(entries => {
-    if (!entries[0].isIntersecting) return;
-    observer.disconnect();
-    tutorial.classList.add('tour-visible');
-    const sequence = ['default', 'balanced', 'performance'];
-    let step = 0;
-    const advance = () => {
-      if (step >= sequence.length) { finishTour(); return; }
-      setMode(sequence[step]);
-      tutorialText.textContent = sequence[step].toUpperCase();
-      step += 1;
-      tourTimer = setTimeout(advance, 1050);
-    };
-    advance();
-  }, { threshold: 0.2 });
-  observer.observe(modeSection);
-} else {
-  sessionStorage.setItem('nexus-mode-tour-seen', '1');
-  document.querySelector('#tourCaption').classList.add('visible');
-}
 
 const menuButton = document.querySelector('.menu-toggle');
 const nav = document.querySelector('#primaryNav');
@@ -270,3 +238,212 @@ window.addEventListener('resize', () => {
   if (currentTab) setMarketView(currentTab.dataset.market);
 });
 setMarketView('overview');
+
+
+// Lightweight local-only NEXUS concept demo.
+const demo = document.querySelector('#nexusDemo');
+const demoPage = document.querySelector('#demoPage');
+const demoTabs = [...document.querySelectorAll('[data-demo-tab]')];
+const demoPanel = document.querySelector('#demoToolPanel');
+const demoToolTitle = document.querySelector('#demoToolTitle');
+const demoToolContent = document.querySelector('#demoToolContent');
+const demoModeSelect = document.querySelector('#demoMode');
+const demoSearch = document.querySelector('#demoSearch');
+const demoAddress = document.querySelector('#demoAddressInput');
+const demoTools = {
+  notes: ['Notes', '<p>A quiet place for ideas as you browse.</p><label class="demo-check"><input type="checkbox"> Save a thought for later</label><textarea aria-label="Concept note" placeholder="Write a note in this local demo…"></textarea><small>Notes are not saved.</small>'],
+  shield: ['Shield', '<p>Your privacy controls, brought together.</p><ul><li>Ad and tracker controls <b>CONCEPT</b></li><li>Pop-up controls <b>PLANNED</b></li><li>Scam protection <b>IN DEVELOPMENT</b></li></ul>'],
+  explore: ['Explore', '<p>Useful context for the page you’re reading.</p><div class="demo-result-card"><b>CONTEXT</b><span>Definitions, conversions and sourced information are planned for NEXUS Explore.</span></div>'],
+  hub: ['Hub', '<p>A starting point for your NEXUS tools.</p><div class="demo-hub-links"><button type="button" data-demo-panel="notes">Notes</button><button type="button" data-demo-panel="explore">Explore</button><button type="button" data-demo-panel="shield">Shield</button></div><small>Illustrative shortcuts · concept only</small>']
+};
+function selectDemoTab(name) {
+  const tab = demoTabs.find(item => item.dataset.demoTab === name);
+  if (!tab) return;
+  demoTabs.forEach(item => {
+    const active = item === tab;
+    item.classList.toggle('active', active);
+    item.setAttribute('aria-selected', String(active));
+    item.tabIndex = active ? 0 : -1;
+  });
+  demoPage.setAttribute('aria-labelledby', `demo-tab-${name}`);
+  demoPage.dataset.tab = name;
+  if (name === 'notes') openDemoTool('notes');
+  else if (name === 'home') renderDemoHome();
+  else renderDemoMessage('Research workspace', 'This is a simulated research tab. Use Explore for a concept preview of contextual tools.');
+}
+demoTabs.forEach((tab, index) => {
+  tab.tabIndex = index === 0 ? 0 : -1;
+  tab.id = `demo-tab-${tab.dataset.demoTab}`;
+  tab.addEventListener('click', () => selectDemoTab(tab.dataset.demoTab));
+  tab.addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === 'Home' ? 0 : event.key === 'End' ? demoTabs.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + demoTabs.length) % demoTabs.length;
+    demoTabs[next].focus();
+    selectDemoTab(demoTabs[next].dataset.demoTab);
+  });
+});
+function renderDemoHome() {
+  demoPanel.hidden = true;
+  demo.classList.remove('panel-open');
+  demoPage.innerHTML = `<div class="demo-page-content"><img data-mode-logo src="${modes[currentMode].logo}" alt=""><p class="eyebrow">NEXUS · SIMULATED HOME</p><h3>A clearer space for the web.</h3><p>Try a search or open one of the tools. Everything here is illustrative and stays in this page.</p><div class="demo-shortcuts"><button type="button" data-demo-panel="notes">Open Notes</button><button type="button" data-demo-panel="shield">Open Shield</button><button type="button" data-demo-panel="explore">Explore</button></div></div>`;
+  demoPage.setAttribute('aria-labelledby', 'demo-tab-home');
+}
+function renderDemoMessage(title, message) {
+  demoPanel.hidden = true;
+  demo.classList.remove('panel-open');
+  demoPage.replaceChildren();
+  const messageBox = document.createElement('div');
+  messageBox.className = 'demo-message';
+  const eyebrow = document.createElement('p'); eyebrow.className = 'eyebrow'; eyebrow.textContent = 'SIMULATED · NO LIVE WEB ACCESS';
+  const heading = document.createElement('h3'); heading.textContent = title;
+  const copy = document.createElement('p'); copy.textContent = message;
+  const homeButton = document.createElement('button'); homeButton.type = 'button'; homeButton.dataset.demoAction = 'home'; homeButton.textContent = 'Return to demo home';
+  messageBox.append(eyebrow, heading, copy, homeButton); demoPage.append(messageBox);
+}
+function openDemoTool(name) {
+  const item = demoTools[name];
+  if (!item) return;
+  demoPanel.hidden = false;
+  demo.classList.add('panel-open');
+  demoToolTitle.textContent = item[0];
+  demoToolContent.innerHTML = item[1];
+  // Keep demoPage labelled by the selected demo tab while the tool panel is open.
+}
+function closeDemoTool() {
+  demoPanel.hidden = true;
+  demo.classList.remove('panel-open');
+  selectDemoTab('home');
+}
+demo.addEventListener('click', event => {
+  const toolButton = event.target.closest('[data-demo-panel]');
+  if (toolButton) openDemoTool(toolButton.dataset.demoPanel);
+  if (event.target.closest('[data-close-demo-panel]')) closeDemoTool();
+  if (event.target.closest('[data-demo-action="home"]')) selectDemoTab('home');
+});
+demoModeSelect.addEventListener('change', () => setMode(demoModeSelect.value));
+let previousAboutFocus = null;
+function openAboutPanel() {
+  closeCommandPalette();
+  previousAboutFocus = document.activeElement;
+  document.querySelector('#easterEgg').hidden = false;
+  document.querySelector('[data-close-easter]').focus();
+}
+function closeAboutPanel() {
+  document.querySelector('#easterEgg').hidden = true;
+  previousAboutFocus?.focus?.();
+}
+demoSearch.addEventListener('submit', event => {
+  event.preventDefault();
+  const query = demoAddress.value.trim();
+  if (!query) { demoAddress.focus(); return; }
+  if (query.toLowerCase() === 'nexus://about') { openAboutPanel(); return; }
+  renderDemoMessage('A simulated result', `“${query}” is only shown as text in this concept demo. NEXUS does not perform a web search here.`);
+});
+demo.addEventListener('click', event => {
+  if (event.target.closest('.demo-reset')) {
+    demoSearch.reset();
+    demoModeSelect.value = 'default';
+    setMode('default');
+    selectDemoTab('home');
+    demoAddress.value = '';
+  }
+});
+document.querySelectorAll('[data-close-easter]').forEach(button => button.addEventListener('click', closeAboutPanel));
+document.querySelector('#easterEgg').addEventListener('click', event => { if (event.target.id === 'easterEgg') closeAboutPanel(); });
+
+// Searchable keyboard command palette. Commands point to real sections or local demo tools.
+const commandBackdrop = document.querySelector('#commandBackdrop');
+const commandInput = document.querySelector('#commandInput');
+const commandList = document.querySelector('#commandList');
+const commandItems = [
+  { label: 'Open Notes', detail: 'Show the Notes concept panel', run: () => { revealDemo(); openDemoTool('notes'); } },
+  { label: 'Open Shield', detail: 'Show the Shield concept panel', run: () => { revealDemo(); openDemoTool('shield'); } },
+  { label: 'Open Explore', detail: 'Show the Explore concept panel', run: () => { revealDemo(); openDemoTool('explore'); } },
+  { label: 'Open Markets', detail: 'Go to the Markets concept preview', run: () => document.querySelector('#markets').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }) },
+  { label: 'Set mode: Default', detail: 'Change the NEXUS page mode', run: () => setMode('default') },
+  { label: 'Set mode: Balanced', detail: 'Change the NEXUS page mode', run: () => setMode('balanced') },
+  { label: 'Set mode: Performance', detail: 'Change the NEXUS page mode', run: () => setMode('performance') },
+  { label: 'Open Hub', detail: 'Show the Hub concept panel', run: () => { revealDemo(); openDemoTool('hub'); } },
+  { label: 'Open Developer Toolkit', detail: 'View planned developer tools', run: () => document.querySelector('#features').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }) },
+  { label: 'Why NEXUS?', detail: 'Read the product principles', run: () => document.querySelector('#why-nexus').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }) }
+];
+let filteredCommands = commandItems;
+let selectedCommand = 0;
+let previousCommandFocus = null;
+function revealDemo() {
+  document.querySelector('#try-nexus').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+  selectDemoTab('home');
+}
+function renderCommands() {
+  const query = commandInput.value.trim().toLowerCase();
+  filteredCommands = commandItems.filter(item => `${item.label} ${item.detail}`.toLowerCase().includes(query));
+  selectedCommand = Math.min(selectedCommand, Math.max(0, filteredCommands.length - 1));
+  commandList.replaceChildren();
+  filteredCommands.forEach((item, index) => {
+    const row = document.createElement('li');
+    row.id = `command-option-${index}`;
+    row.setAttribute('role', 'option');
+    row.setAttribute('aria-selected', String(index === selectedCommand));
+    row.tabIndex = -1;
+    row.innerHTML = `<span>${item.label}<small>${item.detail}</small></span><kbd>↵</kbd>`;
+    row.addEventListener('mouseenter', () => { selectedCommand = index; updateCommandSelection(); });
+    row.addEventListener('click', () => runCommand(index));
+    commandList.append(row);
+  });
+  if (!filteredCommands.length) {
+    const empty = document.createElement('li');
+    empty.className = 'command-empty';
+    empty.textContent = 'No matching NEXUS commands';
+    commandList.append(empty);
+  }
+  updateCommandSelection();
+}
+function updateCommandSelection() {
+  [...commandList.querySelectorAll('[role="option"]')].forEach((row, index) => row.setAttribute('aria-selected', String(index === selectedCommand)));
+  commandInput.setAttribute('aria-activedescendant', filteredCommands.length ? `command-option-${selectedCommand}` : '');
+}
+function openCommandPalette() {
+  if (!commandBackdrop.hidden) return;
+  previousCommandFocus = document.activeElement;
+  commandBackdrop.hidden = false;
+  commandInput.setAttribute('aria-expanded', 'true');
+  commandInput.value = '';
+  renderCommands();
+  commandInput.focus();
+}
+function closeCommandPalette() {
+  if (commandBackdrop.hidden) return;
+  commandBackdrop.hidden = true;
+  commandInput.setAttribute('aria-expanded', 'false');
+  previousCommandFocus?.focus?.();
+}
+function runCommand(index) {
+  const command = filteredCommands[index];
+  if (!command) return;
+  closeCommandPalette();
+  command.run();
+}
+document.querySelectorAll('[data-open-commands]').forEach(button => button.addEventListener('click', openCommandPalette));
+commandInput.addEventListener('input', () => { selectedCommand = 0; renderCommands(); });
+commandInput.addEventListener('keydown', event => {
+  if (event.key === 'ArrowDown' && filteredCommands.length) { event.preventDefault(); selectedCommand = (selectedCommand + 1) % filteredCommands.length; updateCommandSelection(); }
+  else if (event.key === 'ArrowUp' && filteredCommands.length) { event.preventDefault(); selectedCommand = (selectedCommand - 1 + filteredCommands.length) % filteredCommands.length; updateCommandSelection(); }
+  else if (event.key === 'Enter') { event.preventDefault(); runCommand(selectedCommand); }
+});
+commandBackdrop.addEventListener('click', event => { if (event.target === commandBackdrop) closeCommandPalette(); });
+document.addEventListener('keydown', event => {
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openCommandPalette(); }
+  if (event.key === 'Escape') {
+    if (menuButton.getAttribute('aria-expanded') === 'true') { menuButton.click(); }
+    if (!commandBackdrop.hidden) closeCommandPalette();
+    else if (!document.querySelector('#easterEgg').hidden) closeAboutPanel();
+    else if (!demoPanel.hidden) closeDemoTool();
+  }
+  if (!commandBackdrop.hidden && (event.key === 'ArrowDown' || event.key === 'ArrowUp') && document.activeElement !== commandInput) {
+    event.preventDefault();
+    selectedCommand = (selectedCommand + (event.key === 'ArrowDown' ? 1 : -1) + filteredCommands.length) % filteredCommands.length;
+    updateCommandSelection();
+    commandInput.focus();
+  }
+});
