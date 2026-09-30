@@ -171,22 +171,22 @@ const marketViews = {
   overview: {
     title: 'Research at a glance', kicker: 'YOUR MARKETS',
     description: 'Explore stocks, IPO updates, mutual funds, financial news and saved research in one place.',
-    foot: 'Markets · overview', visual: 'chart'
+    foot: 'Markets · overview', visual: 'chart', chartLabel: 'Illustrative concept chart · no live data'
   },
   stocks: {
     title: 'Follow the companies you care about', kicker: 'STOCKS & IPOs',
     description: 'NEXUS brings stock information, charts, IPO updates and related news into a focused research view. This preview is not connected to live prices.',
-    foot: 'Stocks · IPO research · related news', visual: 'chart'
+    foot: 'Stocks · IPO research · related news', visual: 'chart', chartLabel: 'Illustrative stock chart · no live prices', chartPath: 'M0 80 C18 78 22 48 42 56 S65 88 82 63 S103 18 122 38 S148 73 166 49 S187 21 205 45 S228 84 246 53 S270 9 287 28 S307 67 325 41 S349 12 365 30 S386 49 400 8'
   },
   funds: {
     title: 'Explore mutual funds', kicker: 'FUNDS',
     description: 'Browse mutual-fund information and research in one place. The preview does not show live performance, returns or recommendations.',
-    foot: 'Mutual fund discovery · no live performance data', visual: 'chart'
+    foot: 'Mutual fund discovery · no live performance data', visual: 'chart', chartLabel: 'Illustrative fund chart · no live performance data', chartPath: 'M0 82 C28 79 48 75 70 72 S111 67 137 61 S179 54 205 49 S249 42 274 35 S315 29 342 23 S379 15 400 9'
   },
   shopping: {
     title: 'Keep an eye on products', kicker: 'SHOPPING PRICE TRACKING',
-    description: 'Save products you are considering and use price tracking to follow changes across supported stores.',
-    foot: 'Shopping · saved items · price tracking', visual: 'shopping'
+    description: 'A planned concept for saving products and tracking price changes across supported stores.',
+    foot: 'Shopping concept · planned saved items and price tracking', visual: 'shopping'
   }
 };
 const marketTabs = [...document.querySelectorAll('.market-tab')];
@@ -207,8 +207,12 @@ function setMarketView(view, focus = false) {
   document.querySelector('#marketKicker').textContent = item.kicker;
   document.querySelector('#marketDescription').textContent = item.description;
   document.querySelector('#marketFootLeft').textContent = item.foot;
-  document.querySelector('#marketFootRight').textContent = item.visual === 'shopping' ? 'Concept interface · store availability may vary' : 'Illustrative interface · no live data';
-  document.querySelector('#marketChart').hidden = item.visual === 'shopping';
+  document.querySelector('#marketFootRight').textContent = item.visual === 'shopping' ? 'Illustrative UI · planned concept' : 'Illustrative interface · no live data';
+  const marketChart = document.querySelector('#marketChart');
+  marketChart.hidden = item.visual === 'shopping';
+  marketChart.setAttribute('aria-label', item.chartLabel || 'Illustrative concept chart · no live data');
+  const marketTrend = document.querySelector('#marketTrend');
+  if (item.chartPath && marketTrend) marketTrend.setAttribute('d', item.chartPath);
   document.querySelector('#shoppingDemo').hidden = item.visual !== 'shopping';
   document.querySelector('#marketPanel').dataset.view = view;
   if (tab && marketIndicator && marketTabsRail) {
@@ -446,4 +450,23 @@ document.addEventListener('keydown', event => {
     updateCommandSelection();
     commandInput.focus();
   }
+});
+
+
+// Local-only VPN setup concept. Selecting a destination never starts a VPN.
+const vpnCountries = {
+  asia: ['India', 'Japan', 'Singapore'],
+  europe: ['France', 'Germany', 'Netherlands'],
+  americas: ['Brazil', 'Canada', 'United States']
+};
+const vpnRegion = document.querySelector('#vpnRegion');
+const vpnCountry = document.querySelector('#vpnCountry');
+const vpnDemoStatus = document.querySelector('#vpnDemoStatus');
+vpnRegion.addEventListener('change', () => {
+  const countries = vpnCountries[vpnRegion.value] || [];
+  vpnCountry.replaceChildren(...countries.map(country => { const option = document.createElement('option'); option.value = country; option.textContent = country; return option; }));
+  vpnDemoStatus.textContent = 'SIMULATED · NO VPN CONNECTION';
+});
+document.querySelector('#vpnSetButton').addEventListener('click', () => {
+  vpnDemoStatus.textContent = `SIMULATED · ${vpnCountry.value} selected. No VPN connection is made.`;
 });
