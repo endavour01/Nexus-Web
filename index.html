@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050711">
+  <meta name="description" content="Meet NEXUS: one browser, three ways to browse. Explore its modes, privacy tools, notes and research features.">
+  <title>NEXUS — Browsing, Redefined.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-mode="default">
+  <div class="noise" aria-hidden="true"></div>
+  <header class="site-nav">
+    <a class="brand" href="#top" aria-label="NEXUS home"><img data-mode-logo src="assets/nexus-emblem-default.png" alt=""><span>NEXUS</span></a>
+    <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primaryNav"><span></span><span></span></button>
+    <nav class="nav-glass" id="primaryNav" aria-label="Primary navigation">
+      <span class="nav-indicator" aria-hidden="true"></span>
+      <a href="#top">Home</a><a href="#features">Features</a><a href="#security">More</a>
+    </nav>
+    <span class="soon-pill" aria-label="NEXUS coming soon">Coming soon</span>
+  </header>
+
+  <main id="top">
+    <section class="hero cinematic" aria-labelledby="heroTitle">
+      <div class="stars" aria-hidden="true"></div>
+      <div class="hero-copy">
+        <p class="eyebrow">A NEW BROWSER EXPERIENCE</p>
+        <h1 id="heroTitle">BROWSING,<br><span>REDEFINED.</span></h1>
+        <p class="lead">One browser. Three ways to browse.</p>
+        <div class="hero-actions"><span class="coming-soon-chip">COMING SOON</span></div>
+      </div>
+      <div class="hero-orbit" aria-hidden="true"><div class="orbit"></div><img data-mode-logo src="assets/nexus-emblem-default.png" alt=""></div>
+      <div class="mountains" aria-hidden="true"></div>
+    </section>
+
+    <section id="modes" class="section mode-section" aria-labelledby="modeHeading">
+      <div class="section-heading centered"><p class="eyebrow">ADAPTIVE BROWSING</p><h2 id="modeHeading">THREE MODES. <span>ONE NEXUS.</span></h2><p>Choose the feel that fits what you’re doing.</p></div>
+      <div class="mode-tutorial" id="modeTutorial" aria-live="polite"><span class="tutorial-step">MODE TOUR</span><span id="tutorialText">DEFAULT</span><span class="tutorial-arrow" aria-hidden="true">↓</span><button id="skipTour" type="button">Skip tour</button></div>
+      <div class="mode-switcher" role="tablist" aria-label="Choose browsing mode">
+        <span class="mode-indicator" aria-hidden="true"></span>
+        <button class="mode-btn active" id="tab-default" role="tab" aria-selected="true" aria-controls="modePanel" data-mode="default">◈ <b>DEFAULT</b></button>
+        <button class="mode-btn" id="tab-balanced" role="tab" aria-selected="false" aria-controls="modePanel" data-mode="balanced">◉ <b>BALANCED</b></button>
+        <button class="mode-btn" id="tab-performance" role="tab" aria-selected="false" aria-controls="modePanel" data-mode="performance">ϟ <b>PERFORMANCE</b></button>
+      </div>
+      <div class="mode-stage" id="modePanel" role="tabpanel" aria-labelledby="tab-default">
+        <div class="browser-shell">
+          <div class="browser-top"><div class="traffic" aria-hidden="true"><b></b><b></b><b></b></div><div class="tabs"><span class="tab active">NEXUS — New tab</span><span class="tab">Research</span><span class="plus" aria-hidden="true">+</span></div><span class="window-controls" aria-hidden="true">−　□　×</span></div>
+          <div class="browser-toolbar"><div class="side-icons" aria-label="Browser shortcuts"><span title="Home">⌂</span><span title="Shield">◈</span><span title="Notes">▤</span></div><div class="nav-arrows" aria-hidden="true">‹　›　↻</div><div class="address"><span aria-hidden="true">⌕</span> Search or enter address</div><div class="toolbar-icons" aria-hidden="true">☆　⋯</div></div>
+          <div class="browser-body"><aside class="mock-sidebar"><span class="side-active">⌂ <small>Home</small></span><span>▤ <small>Notes</small></span><span>◈ <small>Shield</small></span><span>✦ <small>Hub</small></span><span>＋ <small>Add</small></span></aside>
+            <div class="browser-content"><div class="browser-logo"><img id="modeLogo" data-mode-logo src="assets/nexus-emblem-default.png" alt=""></div><p class="browser-greeting">A clearer space for the web.</p><h3 id="modeTitle">DEFAULT MODE</h3><p id="modeCopy">Clean. Familiar. Powerful.</p><div class="mini-features"><span>◈ Shield</span><span>▤ Notes</span><span>⌕ Intelligence</span></div></div>
+          </div>
+          <div class="browser-status"><span><i></i> NEXUS is ready</span><span id="modeStatus">DEFAULT · EVERYDAY</span></div>
+        </div>
+        <div class="mode-info"><p class="mode-kicker">CURRENT MODE</p><h3 id="modeName">DEFAULT MODE</h3><p id="modeDescription">A familiar, calm setup for everyday browsing with your NEXUS tools close by.</p><div class="mode-stats"><span><b>01</b> Everyday browsing</span><span><b>02</b> Focused productivity</span><span><b>03</b> Performance focus</span></div></div>
+      </div>
+      <p class="tour-caption" id="tourCaption">Three modes. One browser.</p>
+    </section>
+
+    <section class="section system-section">
+      <div class="section-heading"><p class="eyebrow green">NEXUS SYSTEM · CONCEPT VIEW</p><h2>YOUR BROWSER.<br><span>IN YOUR HANDS.</span></h2><p>A glance at the tools that bring your browsing together.</p></div>
+      <div class="system-grid"><div class="terminal glass-panel"><div class="terminal-head"><span>NEXUS SYSTEM</span><i>●</i></div><div class="terminal-lines"><p><em>MODE</em><strong id="systemMode">DEFAULT</strong></p><p><em>TABS</em><strong>—</strong></p><p><em>SHIELD</em><strong>READY</strong></p><p><em>VPN</em><strong>WINDscribe</strong></p><p><em>NOTES</em><strong>READY</strong></p><p class="prompt">&gt;_ <small>ILLUSTRATIVE UI · NOT LIVE DATA</small></p></div></div><div class="system-orbit glass-panel"><div class="small-orbit"></div><img data-mode-logo src="assets/nexus-emblem-default.png" alt="" aria-hidden="true"><p>ONE SPACE.<br><span>YOUR WAY.</span></p></div></div>
+      <div class="power-copy"><h3>TOOLS THAT WORK TOGETHER</h3><p>Personalize your space and keep your essentials within reach.</p></div>
+      <div class="power-grid"><article><span>◌</span><b>Three browsing<br>modes</b></article><article><span>▤</span><b>Notes &<br>workspaces</b></article><article><span>&lt;/&gt;</span><b>Developer<br>toolkit</b></article><article><span>◈</span><b>Privacy<br>controls</b></article></div>
+    </section>
+
+    <section id="features" class="section ecosystem">
+      <div class="section-heading centered"><p class="eyebrow">THE NEXUS ECOSYSTEM</p><h2>MORE THAN A <span>BROWSER.</span></h2><p>A growing set of tools for the way you use the web.</p></div>
+      <div class="device-stage" aria-hidden="true"><div class="device laptop"><div class="device-screen"><div class="screen-top">NEXUS　　◀　▶　↻　　⌕ Search or enter address</div><div class="screen-center"><img data-mode-logo src="assets/nexus-emblem-default.png" alt=""></div><div class="screen-label">YOUR SPACE FOR THE WEB</div></div></div><div class="device tablet"><div class="device-screen"><div class="screen-center"><img data-mode-logo src="assets/nexus-emblem-default.png" alt=""></div></div></div><div class="device phone"><div class="device-screen"><div class="screen-center"><img data-mode-logo src="assets/nexus-emblem-default.png" alt=""></div></div></div><div class="device-orbit"></div></div>
+      <div class="feature-grid">
+        <article><span>◈</span><h3>NEXUS Shield</h3><p>Ad, tracker and pop-up controls with scam protection.</p></article><article><span>▤</span><h3>NEXUS Notes</h3><p>Write, highlight, draw and export your ideas as PDF.</p></article><article><span>⌕</span><h3>NEXUS Explore</h3><p>Context tools for definitions, currency and sourced news.</p></article><article><span>⌁</span><h3>Markets</h3><p>Explore stocks, funds, IPOs, charts and price tracking.</p></article><article><span>◉</span><h3>NEXUS VPN</h3><p>An entry point to Windscribe’s free VPN service.</p></article><article><span>□</span><h3>Privacy Center</h3><p>Find browser privacy controls in one place.</p></article><article><span>✦</span><h3>NEXUS Hub</h3><p>A home for browser tools and useful shortcuts.</p></article><article><span>⇄</span><h3>File Converter</h3><p>Convert supported files from your browser workspace.</p></article><article><span>⌘</span><h3>Extensions</h3><p>Make room for the browser extensions you rely on.</p></article><article><span>&lt;/&gt;</span><h3>Developer Toolkit</h3><p>Useful utilities for people who build for the web.</p></article>
+      </div>
+      <p class="feature-note">Feature descriptions reflect the planned NEXUS product experience and may change before release.</p>
+    </section>
+
+    <section id="security" class="section shield-section" aria-labelledby="shieldTitle"><div class="feature-detail"><div><p class="eyebrow">PRIVACY, AT A GLANCE</p><h2 id="shieldTitle">A SHIELD FOR<br><span>YOUR SPACE.</span></h2><p>Manage ad and tracker blocking, pop-up controls, scam protection and privacy settings from your browser.</p></div><div class="shield-visual glass-panel"><div class="shield-mark">◈</div><div class="shield-list"><span><i></i> Ad & tracker controls</span><span><i></i> Pop-up protection</span><span><i></i> Scam protection</span><span><i></i> Privacy settings</span></div><small>CONTROL PANEL · CONCEPT</small></div></div></section>
+
+    <section id="notes" class="section notes-section"><div class="feature-detail reverse"><div><p class="eyebrow">THINK ON THE PAGE</p><h2>IDEAS, IN<br><span>YOUR FLOW.</span></h2><p>Bring rich text, lists, highlights, sketches and diagrams into a notes space that travels with your browsing.</p></div><div class="notes-visual glass-panel"><div class="note-toolbar"><b>NEXUS NOTES</b><span>B　I　U　✎　▦　↗ PDF</span></div><h3>Research, without losing the thread.</h3><p class="note-highlight">Keep useful ideas close as you explore.</p><ul><li>Save a key quote</li><li>Sketch a connection</li><li>Export when you’re ready</li></ul><div class="note-doodle">◇ ─── ◇<br><small>IDEAS CONNECT HERE</small></div></div></div></section>
+
+    <section class="section intelligence-section"><div class="feature-detail"><div><p class="eyebrow">FOLLOW THE SOURCE</p><h2>UNDERSTAND<br><span>MORE.</span></h2><p>Get context while you browse: definitions, currency conversion and fact-focused news with sources to follow.</p><a class="text-link" href="#features">Meet NEXUS Explore <span aria-hidden="true">↗</span></a></div><div class="intel-visual glass-panel"><div class="intel-head">NEXUS EXPLORE <span>CONCEPT</span></div><div class="intel-term">context <small>noun</small><p>The information that helps make an idea clear.</p></div><div class="intel-source"><b>IN THE NEWS</b><p>Explore a developing story</p><span>Sources and proofs <i>↗</i></span></div><div class="intel-convert">€ 25 <span>→</span> $ 27.10 <small>Illustrative conversion</small></div></div></div></section>
+
+    <section id="markets" class="section markets-section"><div class="section-heading centered"><p class="eyebrow">MARKETS · PRODUCT PREVIEW</p><h2>SEE THE <span>FULL PICTURE.</span></h2><p>Market tools and shopping research, gathered in one place.</p></div><div class="market-board glass-panel">
+        <div class="market-controls">
+        <div class="market-tabs" role="tablist" aria-label="Markets views">
+          <span class="market-indicator" aria-hidden="true"></span>
+          <button class="market-tab active" id="market-tab-overview" type="button" role="tab" aria-selected="true" aria-controls="marketPanel" data-market="overview">Overview</button>
+          <button class="market-tab" id="market-tab-stocks" type="button" role="tab" aria-selected="false" aria-controls="marketPanel" data-market="stocks">Stocks</button>
+          <button class="market-tab" id="market-tab-funds" type="button" role="tab" aria-selected="false" aria-controls="marketPanel" data-market="funds">Funds</button>
+          <button class="market-tab" id="market-tab-shopping" type="button" role="tab" aria-selected="false" aria-controls="marketPanel" data-market="shopping">Shopping</button>
+        </div>
+        <b class="market-disclaimer">CONCEPT PREVIEW · NO LIVE DATA</b>
+        </div>
+        <div class="market-content" id="marketPanel" role="tabpanel" aria-labelledby="market-tab-overview">
+          <div class="market-copy"><small id="marketKicker">YOUR MARKETS</small><h3 id="marketTitle">Research at a glance</h3><p id="marketDescription">Explore stocks, IPO updates, mutual funds, financial news and saved research in one place.</p></div>
+          <div class="market-visual">
+            <div class="chart-demo" id="marketChart" aria-label="Illustrative sample chart"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><svg viewBox="0 0 400 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 78 C35 75 35 52 78 60 S125 70 155 43 S205 58 244 34 S296 49 327 20 S366 35 400 9"/></svg></div>
+            <div class="shopping-demo" id="shoppingDemo" hidden><small>PRICE WATCH · CONCEPT</small><div class="shopping-row"><span class="product-glyph">◇</span><span><b>Saved product</b><small>Track changes across supported stores</small></span><b class="watch-tag">WATCHLIST</b></div><div class="shopping-row"><span class="product-glyph">＋</span><span><b>Add an item</b><small>Keep products you’re comparing together</small></span><span class="add-tag">ADD</span></div></div>
+          </div>
+        </div>
+        <div class="market-foot"><span id="marketFootLeft">Markets · overview</span><span id="marketFootRight">Illustrative interface · no live data</span></div>
+      </div></section>
+
+    <section class="section vpn-section"><div class="vpn-band"><span class="vpn-icon">◉</span><div><p class="eyebrow">PRIVATE CONNECTIONS</p><h2>NEXUS VPN</h2><p>NEXUS provides an entry point to Windscribe’s free VPN service. The VPN infrastructure is provided by Windscribe.</p></div></div></section>
+
+    <section id="story" class="section story"><div class="story-intro"><p class="eyebrow">A BROWSER THAT MOVES WITH YOU</p><h2>FROM FIRST CLICK<br>TO <span>FULL FOCUS.</span></h2></div><div class="story-line" aria-hidden="true"></div>
+      <div class="story-item"><div class="story-copy"><span>01 / BROWSE</span><h2>BROWSE</h2><p>Fast. Focused. Seamless.</p><small>Tabs · Workspaces · Smart organization · Session restoration</small></div><div class="story-screen browser-mini"><div class="mini-bar"></div><img data-mode-logo src="assets/nexus-emblem-default.png" alt="" aria-hidden="true"><span>YOUR NEXT TAB, IN FOCUS</span></div></div>
+      <div class="story-item reverse"><div class="story-copy"><span>02 / CREATE</span><h2>CREATE</h2><p>Turn ideas into something.</p><small>Rich notes · Drawing · Highlights · Tables · PDF export</small></div><div class="story-screen note-mini"><div class="note-lines"></div><div class="note-card">NEXUS<br>NOTES</div></div></div>
+      <div class="story-item"><div class="story-copy"><span>03 / PROTECT</span><h2>PROTECT</h2><p>Your privacy, in view.</p><small>Ad and tracker controls · Pop-ups · Scam protection</small></div><div class="story-screen shield-mini"><span>◈</span><b>NEXUS SHIELD</b><small>YOUR CONTROLS, TOGETHER</small></div></div>
+      <div class="story-item reverse"><div class="story-copy"><span>04 / RESEARCH</span><h2>RESEARCH</h2><p>Go deeper. Follow sources.</p><small>Dictionary context · Currency · Sourced news · Markets</small></div><div class="story-screen lens-mini"><span>⌕</span><b>NEXUS EXPLORE</b><small>CONTEXT WITH SOURCES</small></div></div>
+      <div class="story-item"><div class="story-copy"><span>05 / ORGANIZE</span><h2>ORGANIZE</h2><p>A cleaner way to keep moving.</p><small>Bookmarks · History · Downloads · Extensions · Hub</small></div><div class="story-screen org-mini"><div>TO-DO</div><div>BOOKMARKS</div><div>HISTORY</div></div></div>
+      <div class="story-item reverse"><div class="story-copy"><span>06 / UNDERSTAND</span><h2>UNDERSTAND</h2><p>Make the web work for you.</p><small>Contextual tools · Useful answers · Sources you can follow</small></div><div class="story-screen understand-mini"><img data-mode-logo src="assets/nexus-emblem-default.png" alt="" aria-hidden="true"><span>ONE BROWSER. YOUR WAY.</span></div></div>
+    </section>
+
+    <section id="availability" class="final-section"><img data-mode-logo src="assets/nexus-emblem-default.png" alt="" class="final-logo"><p class="eyebrow">YOUR NEXT BROWSER EXPERIENCE</p><h2>YOUR WEB.<br><span>YOUR WAY.</span></h2><p>NEXUS is on the way.</p><span class="release-status">COMING SOON</span><small>Availability details will be announced closer to release.</small></section>
+  </main>
+  <footer><a class="footer-brand" href="#top">NEXUS</a><nav aria-label="Footer"><a href="mailto:hello@nexus.example">Feedback</a><a href="#" aria-label="GitHub placeholder">GitHub</a><a href="#" aria-label="LinkedIn placeholder">LinkedIn</a></nav><span class="footer-credit"><span aria-hidden="true">✦</span> Crafted by <b>Vikalp</b></span><span class="footer-copyright">© 2026 NEXUS</span></footer>
+  <script src="script.js"></script>
+</body>
+</html>
