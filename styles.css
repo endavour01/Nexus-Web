@@ -114,3 +114,6 @@ footer nav button{border:0;background:transparent;color:#9da7bd;font:inherit;fon
 
 /* Quiet icon links for the footer social row. */
 .footer-socials{display:flex;align-items:center;gap:7px}.footer-socials a{width:31px;height:31px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.08);border-radius:9px;background:rgba(255,255,255,.025);color:#8f9ab2;transition:border-color .22s,color .22s,background .22s}.footer-socials svg{width:14px;height:14px;fill:currentColor}.footer-socials a:hover{border-color:var(--line);background:var(--mode-glass);color:#e7eafb}@media(max-width:600px){footer{align-items:center;flex-wrap:wrap}.footer-socials{order:2}footer .footer-credit{order:3}footer .footer-copyright{order:4}}
+
+/* Preserve the black left peak in the Performance logo instead of screening it into the page. */
+body[data-mode=performance] [data-mode-logo]{mix-blend-mode:normal}
