@@ -13,3 +13,4 @@ Open http://localhost:4173
 
 The site is intentionally dependency-light. The mode switcher changes the live browser mockup and uses the Default/Balanced/Performance emblem assets.
 # Nexus-Web
+# Nexus-Web
