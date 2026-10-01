@@ -306,9 +306,6 @@ function renderDemoHome() {
   demoPage.innerHTML = `
     <div class="demo-page-content">
       <img data-mode-logo src="${modes[currentMode].logo}" alt="">
-      <div class="demo-home-badge-row">
-        <span class="demo-watermark-chip">THIS IS A DEMO · NOT THE ACTUAL BROWSER</span>
-      </div>
       <p class="eyebrow">NEXUS · SIMULATED BROWSER</p>
       <h3>A clearer space for the web.</h3>
       <p>Click any tool below or on the left rail to try it in this interactive demo.</p>
@@ -331,7 +328,6 @@ function renderDemoNotes() {
       <div class="demo-tool-banner">
         <div class="demo-tool-title-row">
           <span class="tool-tag">NEXUS NOTES · WORKSPACE</span>
-          <span class="demo-watermark-chip">THIS IS A DEMO · NOT THE ACTUAL BROWSER</span>
         </div>
         <h4>Scratchpad & Research Capture</h4>
       </div>
@@ -350,7 +346,6 @@ function renderDemoNotes() {
 • Check web aesthetics across high-contrast display profiles</textarea>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:9px; color:#8c97b0;">
           <span id="demoNoteStatus">Local simulated scratchpad · Interactive</span>
-          <span class="demo-watermark-chip" style="font-size:7.5px;">DEMO PREVIEW</span>
         </div>
       </div>
     </div>
@@ -366,7 +361,6 @@ function renderDemoShield() {
       <div class="demo-tool-banner">
         <div class="demo-tool-title-row">
           <span class="tool-tag">NEXUS SHIELD · PRIVACY ENGINE</span>
-          <span class="demo-watermark-chip">THIS IS A DEMO · NOT THE ACTUAL BROWSER</span>
         </div>
         <h4>Real-time Telemetry & Protection Controls</h4>
       </div>
@@ -422,7 +416,6 @@ function renderDemoHub() {
       <div class="demo-tool-banner">
         <div class="demo-tool-title-row">
           <span class="tool-tag">NEXUS HUB · UNIFIED DASHBOARD</span>
-          <span class="demo-watermark-chip">THIS IS A DEMO · NOT THE ACTUAL BROWSER</span>
         </div>
         <h4>Central Switchboard for Workspaces & Tools</h4>
       </div>
@@ -467,7 +460,6 @@ function renderDemoExplore() {
       <div class="demo-tool-banner">
         <div class="demo-tool-title-row">
           <span class="tool-tag">NEXUS EXPLORE · CONTEXT ENGINE</span>
-          <span class="demo-watermark-chip">THIS IS A DEMO · NOT THE ACTUAL BROWSER</span>
         </div>
         <h4>Intelligent Context & On-Page Analysis</h4>
       </div>
@@ -516,13 +508,6 @@ function renderDemoMessage(title, message) {
   const messageBox = document.createElement('div');
   messageBox.className = 'demo-message';
 
-  const badgeRow = document.createElement('div');
-  badgeRow.className = 'demo-home-badge-row';
-  const chip = document.createElement('span');
-  chip.className = 'demo-watermark-chip';
-  chip.textContent = 'THIS IS A DEMO · NOT THE ACTUAL BROWSER';
-  badgeRow.appendChild(chip);
-
   const eyebrow = document.createElement('p');
   eyebrow.className = 'eyebrow';
   eyebrow.textContent = 'SIMULATED · NO LIVE WEB ACCESS';
@@ -538,7 +523,7 @@ function renderDemoMessage(title, message) {
   homeButton.dataset.demoAction = 'home';
   homeButton.textContent = 'Return to demo home';
 
-  messageBox.append(badgeRow, eyebrow, heading, copy, homeButton);
+  messageBox.append(eyebrow, heading, copy, homeButton);
   demoPage.append(messageBox);
 }
 
@@ -629,7 +614,7 @@ demo.addEventListener('change', event => {
   }
 });
 
-demoModeSelect.addEventListener('change', () => setMode(demoModeSelect.value));
+demoModeSelect?.addEventListener('change', () => setMode(demoModeSelect.value));
 let previousAboutFocus = null;
 function openAboutPanel() {
   closeCommandPalette();

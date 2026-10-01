@@ -193,7 +193,19 @@
             <form class="demo-address" id="demoSearch">
               <label class="sr-only" for="demoAddressInput">Search the simulated NEXUS demo</label><span aria-hidden="true">⌕</span><input id="demoAddressInput" type="search" placeholder="Search this concept demo" autocomplete="off"><button type="submit">Go</button>
             </form>
-            <label class="demo-mode-label" for="demoMode">MODE</label><select id="demoMode" aria-label="Choose demo mode"><option value="default">Default</option><option value="balanced">Balanced</option><option value="performance">Performance</option></select>
+            <div class="demo-mode-wrap">
+              <label class="demo-mode-label" for="demoMode">MODE</label>
+              <div class="demo-select-box">
+                <select id="demoMode" aria-label="Choose demo mode">
+                  <option value="default" selected>DEFAULT</option>
+                  <option value="balanced">BALANCED</option>
+                  <option value="performance">PERFORMANCE</option>
+                </select>
+                <svg class="demo-select-arrow" viewBox="0 0 10 6" aria-hidden="true">
+                  <path d="M1 1L5 5L9 1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
           </div>
           <div class="demo-layout">
             <nav class="demo-rail" aria-label="Demo tools">
@@ -202,9 +214,6 @@
             <div class="demo-page" id="demoPage" role="tabpanel" aria-live="polite" aria-labelledby="demo-tab-home">
               <div class="demo-page-content">
                 <img data-mode-logo src="assets/nexus-emblem-default.png" alt="">
-                <div class="demo-home-badge-row">
-                  <span class="demo-watermark-chip">THIS IS A DEMO · NOT THE ACTUAL BROWSER</span>
-                </div>
                 <p class="eyebrow">
                   NEXUS · SIMULATED BROWSER
                 </p>
@@ -234,7 +243,7 @@
             </aside>
           </div>
           <div class="demo-status">
-            <span><i></i> THIS IS A DEMO · NOT THE ACTUAL BROWSER</span><button type="button" data-open-commands>CTRL / CMD + K · COMMANDS</button>
+            <span><i></i> SIMULATED DEMO</span><button type="button" data-open-commands>CTRL / CMD + K · COMMANDS</button>
           </div>
         </div>
         <p class="demo-disclaimer">
