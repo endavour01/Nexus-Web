@@ -16,9 +16,15 @@ const body = document.body;
 const buttons = [...document.querySelectorAll('.mode-btn')];
 const modeSwitcher = document.querySelector('.mode-switcher');
 const modeIndicator = document.querySelector('.mode-indicator');
-const logos = [...document.querySelectorAll('[data-mode-logo]')];
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let currentMode = 'default';
+
+function getNextTabIndex(index, key, length) {
+  if (key === 'Home') return 0;
+  if (key === 'End') return length - 1;
+  const direction = key === 'ArrowRight' ? 1 : -1;
+  return (index + direction + length) % length;
+}
 
 function moveModeIndicator(button) {
   if (!button || !modeIndicator || !modeSwitcher) return;
@@ -53,7 +59,6 @@ function setMode(mode, persist = true) {
   document.querySelector('#modeDescription').textContent = item.description;
   document.querySelector('#modeStatus').textContent = item.status;
   document.querySelector('#systemMode').textContent = mode.toUpperCase();
-  document.querySelectorAll('.mode-timeline .dot').forEach((dot, index) => dot.classList.toggle('active', index === ['default', 'balanced', 'performance'].indexOf(mode)));
   if (persist) sessionStorage.setItem('nexus-site-mode', mode);
 }
 
@@ -62,7 +67,7 @@ buttons.forEach((button, index) => {
   button.addEventListener('keydown', event => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
-    const next = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + buttons.length) % buttons.length;
+    const next = getNextTabIndex(index, event.key, buttons.length);
     buttons[next].focus();
     setMode(buttons[next].dataset.mode);
   });
@@ -233,7 +238,7 @@ marketTabs.forEach((tab, index) => {
   tab.addEventListener('keydown', event => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
-    const next = event.key === 'Home' ? 0 : event.key === 'End' ? marketTabs.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + marketTabs.length) % marketTabs.length;
+    const next = getNextTabIndex(index, event.key, marketTabs.length);
     setMarketView(marketTabs[next].dataset.market, true);
   });
 });
@@ -282,7 +287,7 @@ demoTabs.forEach((tab, index) => {
   tab.addEventListener('keydown', event => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
-    const next = event.key === 'Home' ? 0 : event.key === 'End' ? demoTabs.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + demoTabs.length) % demoTabs.length;
+    const next = getNextTabIndex(index, event.key, demoTabs.length);
     demoTabs[next].focus();
     selectDemoTab(demoTabs[next].dataset.demoTab);
   });
@@ -354,95 +359,320 @@ demo.addEventListener('click', event => {
   }
 });
 document.querySelectorAll('[data-close-easter]').forEach(button => button.addEventListener('click', closeAboutPanel));
-document.querySelector('#easterEgg').addEventListener('click', event => { if (event.target.id === 'easterEgg') closeAboutPanel(); });
+document.querySelector('#easterEgg').addEventListener('click', event => {
+  if (event.target.id === 'easterEgg') closeAboutPanel();
+});
 
-// Searchable keyboard command palette. Commands point to real sections or local demo tools.
+// Executable slash command runner for opening tools, workspaces, and actions.
 const commandBackdrop = document.querySelector('#commandBackdrop');
 const commandInput = document.querySelector('#commandInput');
 const commandList = document.querySelector('#commandList');
+const commandRunStatus = document.querySelector('#commandRunStatus');
+
 const commandItems = [
-  { label: 'Open Notes', detail: 'Show the Notes concept panel', run: () => { revealDemo(); openDemoTool('notes'); } },
-  { label: 'Open Shield', detail: 'Show the Shield concept panel', run: () => { revealDemo(); openDemoTool('shield'); } },
-  { label: 'Open Explore', detail: 'Show the Explore concept panel', run: () => { revealDemo(); openDemoTool('explore'); } },
-  { label: 'Open Markets', detail: 'Go to the Markets concept preview', run: () => document.querySelector('#markets').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }) },
-  { label: 'Set mode: Default', detail: 'Change the NEXUS page mode', run: () => setMode('default') },
-  { label: 'Set mode: Balanced', detail: 'Change the NEXUS page mode', run: () => setMode('balanced') },
-  { label: 'Set mode: Performance', detail: 'Change the NEXUS page mode', run: () => setMode('performance') },
-  { label: 'Open Hub', detail: 'Show the Hub concept panel', run: () => { revealDemo(); openDemoTool('hub'); } },
-  { label: 'Open Developer Toolkit', detail: 'View planned developer tools', run: () => document.querySelector('#features').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }) },
-  { label: 'Why NEXUS?', detail: 'Read the product principles', run: () => document.querySelector('#why-nexus').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }) }
+  {
+    cmd: '/connect',
+    label: 'Open NEXUS Connect',
+    detail: 'Open and launch the unified Connect workspace with app preview',
+    run: () => {
+      const connectSec = document.querySelector('#connect');
+      if (connectSec) {
+        connectSec.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+        const firstCard = document.querySelector('.connect-card:not(.connect-add-card)');
+        if (firstCard && typeof openConnectAppDrawer === 'function') {
+          setTimeout(() => openConnectAppDrawer(firstCard), 350);
+        }
+      }
+    }
+  },
+  {
+    cmd: '/connect study',
+    label: 'Open Study Workspace',
+    detail: 'Switch Connect preset to Study workspace',
+    run: () => {
+      if (typeof selectWorkspace === 'function') selectWorkspace('study');
+      document.querySelector('#connect')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+  },
+  {
+    cmd: '/connect work',
+    label: 'Open Work Workspace',
+    detail: 'Switch Connect preset to Work workspace',
+    run: () => {
+      if (typeof selectWorkspace === 'function') selectWorkspace('work');
+      document.querySelector('#connect')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+  },
+  {
+    cmd: '/connect chill',
+    label: 'Open Chill Workspace',
+    detail: 'Switch Connect preset to Chill workspace',
+    run: () => {
+      if (typeof selectWorkspace === 'function') selectWorkspace('chill');
+      document.querySelector('#connect')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+  },
+  {
+    cmd: '/todo',
+    label: 'Open NEXUS Todo',
+    detail: 'Jump to Todo task manager and focus new task input',
+    run: () => {
+      const todoSec = document.querySelector('#todo') || document.querySelector('#hub');
+      todoSec?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+      const input = document.querySelector('#todoInput');
+      if (input) {
+        setTimeout(() => input.focus(), 350);
+      }
+    }
+  },
+  {
+    cmd: '/hub',
+    label: 'Open NEXUS Hub',
+    detail: 'Open central Hub workspace architecture core',
+    run: () => {
+      document.querySelector('#hub')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+  },
+  {
+    cmd: '/notes',
+    label: 'Open Notes Tool',
+    detail: 'Launch interactive NEXUS Notes notebook',
+    run: () => {
+      revealDemo();
+      openDemoTool('notes');
+    }
+  },
+  {
+    cmd: '/shield',
+    label: 'Open Shield Security',
+    detail: 'Launch NEXUS Shield privacy controls panel',
+    run: () => {
+      revealDemo();
+      openDemoTool('shield');
+    }
+  },
+  {
+    cmd: '/explore',
+    label: 'Open Explore Intelligence',
+    detail: 'Launch NEXUS Explore research context tool',
+    run: () => {
+      revealDemo();
+      openDemoTool('explore');
+    }
+  },
+  {
+    cmd: '/markets',
+    label: 'Open Markets Board',
+    detail: 'Open the Markets research board and chart preview',
+    run: () => {
+      const marketsSec = document.querySelector('#markets');
+      marketsSec?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+      document.querySelector('#market-tab-overview')?.click();
+    }
+  },
+  {
+    cmd: '/mode default',
+    label: 'Set Mode: Default',
+    detail: 'Switch browser interface to Default (Cyan theme)',
+    run: () => setMode('default')
+  },
+  {
+    cmd: '/mode balanced',
+    label: 'Set Mode: Balanced',
+    detail: 'Switch browser interface to Balanced (Gold theme)',
+    run: () => setMode('balanced')
+  },
+  {
+    cmd: '/mode performance',
+    label: 'Set Mode: Performance',
+    detail: 'Switch browser interface to Performance (Crimson theme)',
+    run: () => setMode('performance')
+  },
+  {
+    cmd: '/vpn',
+    label: 'Open VPN Tool',
+    detail: 'Open the Windscribe VPN connection simulator',
+    run: () => {
+      document.querySelector('#vpn')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+      document.querySelector('#vpnCountry')?.focus();
+    }
+  },
+  {
+    cmd: '/system',
+    label: 'Open NEXUS System Info',
+    detail: 'Launch secret NEXUS://ABOUT diagnostic window',
+    run: () => {
+      openAboutPanel();
+    }
+  },
+  {
+    cmd: '/reset',
+    label: 'Reset Demo State',
+    detail: 'Clear simulator inputs and restore initial demo state',
+    run: () => {
+      demoSearch?.reset();
+      setMode('default');
+      selectDemoTab('home');
+    }
+  }
 ];
+
 let filteredCommands = commandItems;
 let selectedCommand = 0;
 let previousCommandFocus = null;
+
 function revealDemo() {
   document.querySelector('#try-nexus').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
   selectDemoTab('home');
 }
+
 function renderCommands() {
-  const query = commandInput.value.trim().toLowerCase();
-  filteredCommands = commandItems.filter(item => `${item.label} ${item.detail}`.toLowerCase().includes(query));
+  const rawQuery = commandInput.value.trim().toLowerCase();
+  const query = rawQuery.startsWith('/') ? rawQuery.slice(1) : rawQuery;
+
+  filteredCommands = commandItems.filter(item => {
+    const itemCmd = item.cmd.toLowerCase();
+    const itemLabel = item.label.toLowerCase();
+    const itemDetail = item.detail.toLowerCase();
+    return itemCmd.includes(rawQuery) || itemCmd.slice(1).includes(query) || itemLabel.includes(rawQuery) || itemDetail.includes(rawQuery);
+  });
+
   selectedCommand = Math.min(selectedCommand, Math.max(0, filteredCommands.length - 1));
   commandList.replaceChildren();
+
   filteredCommands.forEach((item, index) => {
     const row = document.createElement('li');
     row.id = `command-option-${index}`;
     row.setAttribute('role', 'option');
     row.setAttribute('aria-selected', String(index === selectedCommand));
     row.tabIndex = -1;
-    row.innerHTML = `<span>${item.label}<small>${item.detail}</small></span><kbd>↵</kbd>`;
+
+    const content = document.createElement('div');
+    content.className = 'cmd-row-content';
+
+    const badge = document.createElement('span');
+    badge.className = 'cmd-action-badge';
+    badge.textContent = item.cmd;
+
+    const title = document.createElement('strong');
+    title.textContent = item.label;
+
+    const detail = document.createElement('small');
+    detail.textContent = item.detail;
+
+    content.append(badge, title, detail);
+
+    const shortcut = document.createElement('kbd');
+    shortcut.textContent = 'RUN ↵';
+
+    row.append(content, shortcut);
     row.addEventListener('mouseenter', () => { selectedCommand = index; updateCommandSelection(); });
     row.addEventListener('click', () => runCommand(index));
     commandList.append(row);
   });
+
   if (!filteredCommands.length) {
     const empty = document.createElement('li');
     empty.className = 'command-empty';
-    empty.textContent = 'No matching NEXUS commands';
+    empty.textContent = `Unknown command "${commandInput.value}". Try /connect, /todo, /notes, /shield, /mode`;
     commandList.append(empty);
   }
+
   updateCommandSelection();
 }
+
 function updateCommandSelection() {
   [...commandList.querySelectorAll('[role="option"]')].forEach((row, index) => row.setAttribute('aria-selected', String(index === selectedCommand)));
   commandInput.setAttribute('aria-activedescendant', filteredCommands.length ? `command-option-${selectedCommand}` : '');
 }
-function openCommandPalette() {
+
+function openCommandPalette(initialValue = '') {
   if (!commandBackdrop.hidden) return;
   previousCommandFocus = document.activeElement;
   commandBackdrop.hidden = false;
   commandInput.setAttribute('aria-expanded', 'true');
-  commandInput.value = '';
+  commandInput.value = initialValue;
   renderCommands();
   commandInput.focus();
+  if (initialValue) {
+    commandInput.setSelectionRange(initialValue.length, initialValue.length);
+  }
 }
+
 function closeCommandPalette() {
   if (commandBackdrop.hidden) return;
   commandBackdrop.hidden = true;
   commandInput.setAttribute('aria-expanded', 'false');
   previousCommandFocus?.focus?.();
 }
+
 function runCommand(index) {
   const command = filteredCommands[index];
   if (!command) return;
   closeCommandPalette();
+  if (commandRunStatus) {
+    commandRunStatus.textContent = `Executed: ${command.cmd} (${command.label})`;
+  }
   command.run();
 }
-document.querySelectorAll('[data-open-commands]').forEach(button => button.addEventListener('click', openCommandPalette));
-commandInput.addEventListener('input', () => { selectedCommand = 0; renderCommands(); });
-commandInput.addEventListener('keydown', event => {
-  if (event.key === 'ArrowDown' && filteredCommands.length) { event.preventDefault(); selectedCommand = (selectedCommand + 1) % filteredCommands.length; updateCommandSelection(); }
-  else if (event.key === 'ArrowUp' && filteredCommands.length) { event.preventDefault(); selectedCommand = (selectedCommand - 1 + filteredCommands.length) % filteredCommands.length; updateCommandSelection(); }
-  else if (event.key === 'Enter') { event.preventDefault(); runCommand(selectedCommand); }
+
+document.querySelectorAll('[data-open-commands]').forEach(button => button.addEventListener('click', () => openCommandPalette()));
+
+document.querySelectorAll('.cmd-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const cmd = chip.dataset.quickCmd;
+    if (!cmd) return;
+    commandInput.value = cmd;
+    renderCommands();
+    const foundIndex = filteredCommands.findIndex(i => i.cmd.toLowerCase() === cmd.toLowerCase());
+    if (foundIndex >= 0) {
+      runCommand(foundIndex);
+    }
+  });
 });
-commandBackdrop.addEventListener('click', event => { if (event.target === commandBackdrop) closeCommandPalette(); });
+
+commandInput.addEventListener('input', () => { selectedCommand = 0; renderCommands(); });
+
+commandInput.addEventListener('keydown', event => {
+  if (event.key === 'ArrowDown' && filteredCommands.length) {
+    event.preventDefault();
+    selectedCommand = (selectedCommand + 1) % filteredCommands.length;
+    updateCommandSelection();
+  } else if (event.key === 'ArrowUp' && filteredCommands.length) {
+    event.preventDefault();
+    selectedCommand = (selectedCommand - 1 + filteredCommands.length) % filteredCommands.length;
+    updateCommandSelection();
+  } else if (event.key === 'Enter') {
+    event.preventDefault();
+    const typed = commandInput.value.trim().toLowerCase();
+    const exactMatch = filteredCommands.findIndex(i => i.cmd.toLowerCase() === typed || i.cmd.toLowerCase().slice(1) === typed);
+    if (exactMatch >= 0) {
+      runCommand(exactMatch);
+    } else if (filteredCommands.length) {
+      runCommand(selectedCommand);
+    }
+  }
+});
+
+commandBackdrop.addEventListener('click', event => {
+  if (event.target === commandBackdrop) closeCommandPalette();
+});
+
 document.addEventListener('keydown', event => {
-  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openCommandPalette(); }
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+    event.preventDefault();
+    openCommandPalette();
+  }
+  if (event.key === '/' && document.activeElement !== commandInput && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+    event.preventDefault();
+    openCommandPalette('/');
+  }
   if (event.key === 'Escape') {
     if (menuButton.getAttribute('aria-expanded') === 'true') { menuButton.click(); }
     if (!commandBackdrop.hidden) closeCommandPalette();
     else if (!document.querySelector('#easterEgg').hidden) closeAboutPanel();
     else if (!demoPanel.hidden) closeDemoTool();
+    else if (connectDrawer && !connectDrawer.hidden) closeConnectAppDrawer();
   }
   if (!commandBackdrop.hidden && (event.key === 'ArrowDown' || event.key === 'ArrowUp') && document.activeElement !== commandInput) {
     event.preventDefault();
@@ -470,3 +700,237 @@ vpnRegion.addEventListener('change', () => {
 document.querySelector('#vpnSetButton').addEventListener('click', () => {
   vpnDemoStatus.textContent = `SIMULATED · ${vpnCountry.value} selected. No VPN connection is made.`;
 });
+
+// ==========================================
+// NEXUS CONNECT INTERACTIVE WORKSPACE DEMO
+// ==========================================
+const connectWorkspace = document.querySelector('#connectWorkspace');
+const workspacePills = [...document.querySelectorAll('.workspace-pill')];
+const connectCatBtns = [...document.querySelectorAll('.connect-cat-btn')];
+const workspaceDesc = document.querySelector('#workspaceDesc');
+const connectCards = [...document.querySelectorAll('.connect-card:not(.connect-add-card)')];
+const connectAddCard = document.querySelector('#connectAddCard');
+const connectDrawer = document.querySelector('#connectDrawer');
+const connectStage = document.querySelector('.connect-stage');
+const drawerTitle = document.querySelector('#drawerTitle');
+const drawerCategory = document.querySelector('#drawerCategory');
+const drawerCatDisplay = document.querySelector('#drawerCatDisplay');
+const drawerWsDisplay = document.querySelector('#drawerWsDisplay');
+const drawerDescription = document.querySelector('#drawerDescription');
+const drawerStatusMessage = document.querySelector('#drawerStatusMessage');
+const drawerFavBtn = document.querySelector('#drawerFavBtn');
+const closeDrawerActionBtn = document.querySelector('#closeDrawerActionBtn');
+const closeDrawerBtn = document.querySelector('#closeDrawerBtn');
+
+const workspaceDetails = {
+  study: '<span>Workspace:</span> <strong>STUDY</strong> — Research, class calls, and collaborative notes.',
+  work: '<span>Workspace:</span> <strong>WORK</strong> — Engineering, video meetings, and team channels.',
+  chill: '<span>Workspace:</span> <strong>CHILL</strong> — Community chat, discussion boards, and social channels.'
+};
+
+let currentWorkspace = 'study';
+let currentCategory = 'all';
+let currentSelectedCard = null;
+
+function filterConnectApps() {
+  connectCards.forEach(card => {
+    const cardWorkspaces = card.dataset.workspaces || '';
+    const cardCat = card.dataset.category || '';
+    const inWorkspace = cardWorkspaces.includes(currentWorkspace);
+    const matchCategory = currentCategory === 'all' || cardCat === currentCategory;
+
+    if (!matchCategory) {
+      card.style.display = 'none';
+    } else {
+      card.style.display = '';
+      card.classList.toggle('in-workspace', inWorkspace);
+      card.classList.remove('dimmed');
+      card.removeAttribute('aria-hidden');
+    }
+  });
+}
+
+function selectWorkspace(ws) {
+  if (!workspaceDetails[ws]) return;
+  currentWorkspace = ws;
+  workspacePills.forEach(pill => {
+    const active = pill.dataset.workspace === ws;
+    pill.classList.toggle('active', active);
+    pill.setAttribute('aria-selected', String(active));
+  });
+  if (workspaceDesc) workspaceDesc.innerHTML = workspaceDetails[ws];
+  filterConnectApps();
+}
+
+workspacePills.forEach(pill => {
+  pill.addEventListener('click', () => selectWorkspace(pill.dataset.workspace));
+});
+
+function selectCategory(cat) {
+  currentCategory = cat;
+  connectCatBtns.forEach(btn => {
+    const active = btn.dataset.cat === cat;
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-selected', String(active));
+  });
+  filterConnectApps();
+}
+
+connectCatBtns.forEach(btn => {
+  btn.addEventListener('click', () => selectCategory(btn.dataset.cat));
+});
+
+function openConnectAppDrawer(card) {
+  currentSelectedCard = card;
+  connectCards.forEach(c => c.classList.remove('active-app'));
+  card.classList.add('active-app');
+
+  const appName = card.querySelector('h4')?.textContent || 'Web App';
+  const appDesc = card.querySelector('p')?.textContent || '';
+  const appCat = (card.dataset.category || '').toUpperCase();
+  const appWs = (card.dataset.workspaces || '').split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' & ');
+  const isFav = card.classList.contains('is-favorite');
+
+  if (drawerTitle) drawerTitle.textContent = appName;
+  if (drawerCategory) drawerCategory.textContent = `${appCat} WORKSPACE SHORTCUT`;
+  if (drawerCatDisplay) drawerCatDisplay.textContent = appCat;
+  if (drawerWsDisplay) drawerWsDisplay.textContent = appWs;
+  if (drawerDescription) drawerDescription.textContent = appDesc;
+  if (drawerStatusMessage) drawerStatusMessage.textContent = 'Supported web application shortcut · Preview mode';
+  if (drawerFavBtn) drawerFavBtn.textContent = isFav ? '★ Favorited' : '☆ Favorite';
+
+  if (connectDrawer) connectDrawer.hidden = false;
+  if (connectStage) connectStage.classList.add('drawer-open');
+}
+
+function closeConnectAppDrawer() {
+  if (!connectDrawer) return;
+  connectDrawer.hidden = true;
+  if (connectStage) connectStage.classList.remove('drawer-open');
+  if (currentSelectedCard) {
+    currentSelectedCard.classList.remove('active-app');
+    currentSelectedCard = null;
+  }
+}
+
+connectCards.forEach(card => {
+  card.addEventListener('click', (e) => {
+    if (e.target.closest('.fav-btn')) {
+      e.stopPropagation();
+      toggleCardFavorite(card);
+      return;
+    }
+    openConnectAppDrawer(card);
+  });
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openConnectAppDrawer(card);
+    }
+  });
+});
+
+if (connectAddCard) {
+  connectAddCard.addEventListener('click', () => {
+    currentSelectedCard = null;
+    connectCards.forEach(c => c.classList.remove('active-app'));
+    if (drawerTitle) drawerTitle.textContent = 'Add Custom Web App';
+    if (drawerCategory) drawerCategory.textContent = 'CUSTOM SHORTCUT';
+    if (drawerCatDisplay) drawerCatDisplay.textContent = 'Custom';
+    if (drawerWsDisplay) drawerWsDisplay.textContent = currentWorkspace.toUpperCase();
+    if (drawerDescription) drawerDescription.textContent = 'Enter a verified web application destination to launch inside a dedicated, isolated NEXUS workspace tab.';
+    if (drawerStatusMessage) drawerStatusMessage.textContent = 'Feature in development · Custom web launcher is planned for NEXUS browser release.';
+    if (drawerFavBtn) drawerFavBtn.textContent = '☆ Favorite';
+    if (connectDrawer) connectDrawer.hidden = false;
+    if (connectStage) connectStage.classList.add('drawer-open');
+  });
+  connectAddCard.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      connectAddCard.click();
+    }
+  });
+}
+
+function toggleCardFavorite(card) {
+  const isFav = card.classList.toggle('is-favorite');
+  if (currentSelectedCard === card && drawerFavBtn) {
+    drawerFavBtn.textContent = isFav ? '★ Favorited' : '☆ Favorite';
+  }
+}
+
+if (closeDrawerBtn) {
+  closeDrawerBtn.addEventListener('click', closeConnectAppDrawer);
+}
+
+if (drawerFavBtn) {
+  drawerFavBtn.addEventListener('click', () => {
+    if (!currentSelectedCard) return;
+    toggleCardFavorite(currentSelectedCard);
+  });
+}
+
+if (closeDrawerActionBtn) {
+  closeDrawerActionBtn.addEventListener('click', closeConnectAppDrawer);
+}
+
+// Initial filter for Connect
+filterConnectApps();
+
+// ==========================================
+// NEXUS TODO INTERACTIVE WORKSPACE DEMO
+// ==========================================
+const todoForm = document.querySelector('#todoForm');
+const todoInput = document.querySelector('#todoInput');
+const todoCategorySelect = document.querySelector('#todoCategorySelect');
+const todoPrioritySelect = document.querySelector('#todoPrioritySelect');
+const todoList = document.querySelector('#todoList');
+const todoSummaryCount = document.querySelector('#todoSummaryCount');
+
+function updateTodoSummary() {
+  if (!todoList || !todoSummaryCount) return;
+  const activeCount = todoList.querySelectorAll('.todo-item:not(.completed)').length;
+  todoSummaryCount.textContent = `${activeCount} active task${activeCount === 1 ? '' : 's'}`;
+}
+
+function bindTodoItem(item) {
+  const checkbox = item.querySelector('.todo-checkbox');
+  if (!checkbox) return;
+  checkbox.addEventListener('change', () => {
+    item.classList.toggle('completed', checkbox.checked);
+    updateTodoSummary();
+  });
+}
+
+document.querySelectorAll('.todo-item').forEach(bindTodoItem);
+updateTodoSummary();
+
+if (todoForm && todoInput && todoList) {
+  todoForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = todoInput.value.trim();
+    if (!text) return;
+    const cat = todoCategorySelect?.value || 'Work';
+    const prio = todoPrioritySelect?.value || 'Normal';
+    const prioClass = prio.toLowerCase() === 'high' ? 'high' : (prio.toLowerCase() === 'medium' || prio.toLowerCase() === 'med' ? 'med' : 'low');
+
+    const li = document.createElement('li');
+    li.className = 'todo-item';
+    li.innerHTML = `
+      <label class="todo-check-wrap">
+        <input type="checkbox" class="todo-checkbox">
+        <span class="todo-label">${text}</span>
+      </label>
+      <div class="todo-tags">
+        <span class="priority-tag ${prioClass}">${prio.toUpperCase()}</span>
+        <span class="cat-tag">${cat}</span>
+        <span class="date-tag">Just now</span>
+      </div>
+    `;
+    bindTodoItem(li);
+    todoList.prepend(li);
+    todoInput.value = '';
+    updateTodoSummary();
+  });
+}
+
