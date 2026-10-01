@@ -5200,14 +5200,78 @@ footer nav button {
   border: 1px solid rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 0 18px var(--glow), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  box-shadow: 0 0 22px var(--glow), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  overflow: hidden;
   margin: 6px 0;
   transition: all .25s ease;
 }
 
 .footer-connect-wrap:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 30px var(--glow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 35px var(--glow), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+/* Glowing animation sweep from left to right repeating continuously */
+.footer-connect-wrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 15%,
+    var(--accent) 48%,
+    rgba(255, 255, 255, 0.95) 55%,
+    var(--accent) 65%,
+    transparent 100%
+  );
+  filter: blur(3px);
+  opacity: 0.65;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: connectGlowSweep 2.2s linear infinite;
+  z-index: 0;
+}
+
+.footer-connect-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 45%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent),
+    #ffffff,
+    var(--accent),
+    transparent
+  );
+  box-shadow: 0 0 10px var(--accent), 0 0 16px var(--glow);
+  pointer-events: none;
+  animation: connectGlowSweep 2.2s linear infinite;
+  z-index: 0;
+}
+
+@keyframes connectGlowSweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(250%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-connect-wrap::before,
+  .footer-connect-wrap::after {
+    animation: none;
+    opacity: 0.35;
+  }
 }
 
 .footer-connect-label {
