@@ -9,7 +9,7 @@
     <header class="site-nav">
       <a class="brand" href="#top" aria-label="NEXUS home"><img data-mode-logo src="assets/nexus-emblem-default.png" alt=""><span>NEXUS</span></a><button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primaryNav"><span></span><span></span></button>
       <nav class="nav-glass" id="primaryNav" aria-label="Primary navigation">
-        <span class="nav-indicator" aria-hidden="true"></span><a href="#top">Home</a><a href="#modes">Modes</a><a href="#features">Features</a><a href="#connect">Connect</a><a href="#security">More</a>
+        <span class="nav-indicator" aria-hidden="true"></span><a href="#top">Home</a><a href="#modes">Modes</a><a href="#features">Features</a><a href="#connect">Connect</a><a href="#hub">Hub</a><a href="#security">More</a>
       </nav>
       <button class="command-hint" type="button" data-open-commands aria-label="Run command (slash command)"><kbd>/</kbd><span>TRY COMMANDS</span></button>
     </header>
@@ -184,7 +184,7 @@
               <i></i><i></i><i></i>
             </div>
             <div class="demo-tabs" role="tablist" aria-label="Demo tabs">
-              <button type="button" class="demo-tab active" role="tab" aria-selected="true" aria-controls="demoPage" id="demo-tab-home" data-demo-tab="home">New tab</button><button type="button" class="demo-tab" role="tab" aria-selected="false" aria-controls="demoPage" id="demo-tab-research" data-demo-tab="research">Research</button><button type="button" class="demo-tab" role="tab" aria-selected="false" aria-controls="demoPage" id="demo-tab-notes" data-demo-tab="notes">Notes</button>
+              <button type="button" class="demo-tab active" role="tab" aria-selected="true" aria-controls="demoPage" id="demo-tab-home" data-demo-tab="home">Home</button><button type="button" class="demo-tab" role="tab" aria-selected="false" aria-controls="demoPage" id="demo-tab-notes" data-demo-tab="notes">Notes</button><button type="button" class="demo-tab" role="tab" aria-selected="false" aria-controls="demoPage" id="demo-tab-hub" data-demo-tab="hub">Hub</button><button type="button" class="demo-tab" role="tab" aria-selected="false" aria-controls="demoPage" id="demo-tab-shield" data-demo-tab="shield">Shield</button><button type="button" class="demo-tab" role="tab" aria-selected="false" aria-controls="demoPage" id="demo-tab-explore" data-demo-tab="explore">Explore</button>
             </div>
             <button class="icon-button demo-reset" type="button" aria-label="Reset demo" title="Reset demo">↺</button>
           </div>
@@ -197,29 +197,32 @@
           </div>
           <div class="demo-layout">
             <nav class="demo-rail" aria-label="Demo tools">
-              <button type="button" data-demo-panel="notes">▤ <span>Notes</span></button><button type="button" data-demo-panel="shield">◈ <span>Shield</span></button><button type="button" data-demo-panel="explore">⌕ <span>Explore</span></button><button type="button" data-demo-panel="hub"><span>Hub</span></button>
+              <button type="button" data-demo-panel="notes" title="NEXUS Notes">▤ <span>Notes</span></button><button type="button" data-demo-panel="hub" title="NEXUS Hub">⊞ <span>Hub</span></button><button type="button" data-demo-panel="shield" title="NEXUS Shield">◈ <span>Shield</span></button><button type="button" data-demo-panel="explore" title="NEXUS Explore">⌕ <span>Explore</span></button>
             </nav>
             <div class="demo-page" id="demoPage" role="tabpanel" aria-live="polite" aria-labelledby="demo-tab-home">
               <div class="demo-page-content">
                 <img data-mode-logo src="assets/nexus-emblem-default.png" alt="">
+                <div class="demo-home-badge-row">
+                  <span class="demo-watermark-chip">THIS IS A DEMO · NOT THE ACTUAL BROWSER</span>
+                </div>
                 <p class="eyebrow">
-                  NEXUS · SIMULATED HOME
+                  NEXUS · SIMULATED BROWSER
                 </p>
                 <h3>
                   A clearer space for the web.
                 </h3>
                 <p>
-                  Try a search or open one of the tools. Everything here is illustrative and stays in this page.
+                  Click any tool below or on the left rail to try it in this interactive demo.
                 </p>
                 <div class="demo-shortcuts">
-                  <button type="button" data-demo-panel="notes">Open Notes</button><button type="button" data-demo-panel="shield">Open Shield</button><button type="button" data-demo-panel="explore">Explore</button>
+                  <button type="button" data-demo-panel="notes">▤ Open Notes</button><button type="button" data-demo-panel="hub">⊞ Open Hub</button><button type="button" data-demo-panel="shield">◈ Open Shield</button><button type="button" data-demo-panel="explore">⌕ Explore</button>
                 </div>
               </div>
             </div>
             <aside class="demo-tool-panel" id="demoToolPanel" hidden aria-labelledby="demoToolTitle">
               <div class="demo-panel-head">
                 <div>
-                  <small>NEXUS TOOL · CONCEPT</small>
+                  <small>NEXUS TOOL · DEMO PREVIEW</small>
                   <h3 id="demoToolTitle">
                     Notes
                   </h3>
@@ -231,7 +234,7 @@
             </aside>
           </div>
           <div class="demo-status">
-            <span><i></i> SIMULATED · NO LIVE WEB ACCESS</span><button type="button" data-open-commands>CTRL / CMD + K · COMMANDS</button>
+            <span><i></i> THIS IS A DEMO · NOT THE ACTUAL BROWSER</span><button type="button" data-open-commands>CTRL / CMD + K · COMMANDS</button>
           </div>
         </div>
         <p class="demo-disclaimer">
@@ -1306,7 +1309,7 @@
         <p>
           NEXUS is on the way.
         </p>
-        <span class="release-status">COMING SOON</span><small>Availability details will be announced closer to release.</small>
+        <span class="release-status">AVAILABLE SOON</span><small>Availability details will be announced closer to release.</small>
       </section>
     </main>
     <footer>
@@ -1320,8 +1323,22 @@
         <a href="#todo">Todo</a>
         <a href="#security">Privacy</a>
       </nav>
-      <div class="footer-socials" aria-label="Social links">
-        <a href="https://github.com/endavour01" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5A12 12 0 0 0 8.2 23.9c.6.1.8-.2.8-.5v-1.7c-3.3.7-4-1.4-4-1.4-.5-1.3-1.2-1.6-1.2-1.6-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.3.9.1-.7.4-1.2.7-1.5-2.7-.3-5.5-1.4-5.5-6A4.7 4.7 0 0 1 5.3 9c-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1a4.7 4.7 0 0 1 1.3 3.2c0 4.6-2.8 5.7-5.5 6 .4.3.8 1 .8 2v3c0 .3.2.6.8.5A12 12 0 0 0 12 .5"/></svg></a>
+      <div class="footer-connect-wrap" aria-label="Connect with me">
+        <span class="footer-connect-label">Connect with me on</span>
+        <div class="footer-socials" aria-label="Social links">
+          <a href="https://github.com/endavour01" target="_blank" rel="noopener noreferrer" class="social-pill" aria-label="GitHub (endavour01)" title="GitHub">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5A12 12 0 0 0 8.2 23.9c.6.1.8-.2.8-.5v-1.7c-3.3.7-4-1.4-4-1.4-.5-1.3-1.2-1.6-1.2-1.6-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.3.9.1-.7.4-1.2.7-1.5-2.7-.3-5.5-1.4-5.5-6A4.7 4.7 0 0 1 5.3 9c-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1a4.7 4.7 0 0 1 1.3 3.2c0 4.6-2.8 5.7-5.5 6 .4.3.8 1 .8 2v3c0 .3.2.6.8.5A12 12 0 0 0 12 .5"/></svg>
+            <span>GitHub</span>
+          </a>
+          <a href="https://www.linkedin.com/in/vikalp-soni-960a4a27a/" target="_blank" rel="noopener noreferrer" class="social-pill" aria-label="LinkedIn (Vikalp Soni)" title="LinkedIn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+            <span>LinkedIn</span>
+          </a>
+          <a href="mailto:imvikalpsoni@gmail.com" class="social-pill" aria-label="Email (imvikalpsoni@gmail.com)" title="Email">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 3.2-8 5-8-5V6l8 5 8-5v1.2zm0 10.8H4V9.4l8 5 8-5V18z"/></svg>
+            <span>Email</span>
+          </a>
+        </div>
       </div>
       <span class="footer-credit">Crafted by <b>Vikalp</b></span><span class="footer-copyright">© 2026 NEXUS</span>
     </footer>

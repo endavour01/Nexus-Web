@@ -259,27 +259,34 @@ const demoToolContent = document.querySelector('#demoToolContent');
 const demoModeSelect = document.querySelector('#demoMode');
 const demoSearch = document.querySelector('#demoSearch');
 const demoAddress = document.querySelector('#demoAddressInput');
-const demoTools = {
-  notes: ['Notes', '<p>A quiet place for ideas as you browse.</p><label class="demo-check"><input type="checkbox"> Save a thought for later</label><textarea aria-label="Concept note" placeholder="Write a note in this local demo…"></textarea><small>Notes are not saved.</small>'],
-  shield: ['Shield', '<p>Your privacy controls, brought together.</p><ul><li>Ad and tracker controls <b>CONCEPT</b></li><li>Pop-up controls <b>PLANNED</b></li><li>Scam protection <b>IN DEVELOPMENT</b></li></ul>'],
-  explore: ['Explore', '<p>Useful context for the page you’re reading.</p><div class="demo-result-card"><b>CONTEXT</b><span>Definitions, conversions and sourced information are planned for NEXUS Explore.</span></div>'],
-  hub: ['Hub', '<p>A starting point for your NEXUS tools.</p><div class="demo-hub-links"><button type="button" data-demo-panel="notes">Notes</button><button type="button" data-demo-panel="explore">Explore</button><button type="button" data-demo-panel="shield">Shield</button></div><small>Illustrative shortcuts · concept only</small>']
-};
 function selectDemoTab(name) {
   const tab = demoTabs.find(item => item.dataset.demoTab === name);
-  if (!tab) return;
   demoTabs.forEach(item => {
-    const active = item === tab;
+    const active = item.dataset.demoTab === name;
     item.classList.toggle('active', active);
     item.setAttribute('aria-selected', String(active));
     item.tabIndex = active ? 0 : -1;
   });
+
+  document.querySelectorAll('.demo-rail button').forEach(railBtn => {
+    const active = railBtn.dataset.demoPanel === name;
+    railBtn.classList.toggle('active', active);
+  });
+
   demoPage.setAttribute('aria-labelledby', `demo-tab-${name}`);
   demoPage.dataset.tab = name;
-  if (name === 'notes') openDemoTool('notes');
-  else if (name === 'home') renderDemoHome();
+  if (demoAddress) {
+    demoAddress.value = name === 'home' ? '' : `nexus://${name}`;
+  }
+
+  if (name === 'home') renderDemoHome();
+  else if (name === 'notes') renderDemoNotes();
+  else if (name === 'hub') renderDemoHub();
+  else if (name === 'shield') renderDemoShield();
+  else if (name === 'explore') renderDemoExplore();
   else renderDemoMessage('Research workspace', 'This is a simulated research tab. Use Explore for a concept preview of contextual tools.');
 }
+
 demoTabs.forEach((tab, index) => {
   tab.tabIndex = index === 0 ? 0 : -1;
   tab.id = `demo-tab-${tab.dataset.demoTab}`;
@@ -292,44 +299,336 @@ demoTabs.forEach((tab, index) => {
     selectDemoTab(demoTabs[next].dataset.demoTab);
   });
 });
+
 function renderDemoHome() {
-  demoPanel.hidden = true;
+  if (demoPanel) demoPanel.hidden = true;
   demo.classList.remove('panel-open');
-  demoPage.innerHTML = `<div class="demo-page-content"><img data-mode-logo src="${modes[currentMode].logo}" alt=""><p class="eyebrow">NEXUS · SIMULATED HOME</p><h3>A clearer space for the web.</h3><p>Try a search or open one of the tools. Everything here is illustrative and stays in this page.</p><div class="demo-shortcuts"><button type="button" data-demo-panel="notes">Open Notes</button><button type="button" data-demo-panel="shield">Open Shield</button><button type="button" data-demo-panel="explore">Explore</button></div></div>`;
+  demoPage.innerHTML = `
+    <div class="demo-page-content">
+      <img data-mode-logo src="${modes[currentMode].logo}" alt="">
+      <div class="demo-home-badge-row">
+        <span class="demo-watermark-chip">THIS IS A DEMO · NOT THE ACTUAL BROWSER</span>
+      </div>
+      <p class="eyebrow">NEXUS · SIMULATED BROWSER</p>
+      <h3>A clearer space for the web.</h3>
+      <p>Click any tool below or on the left rail to try it in this interactive demo.</p>
+      <div class="demo-shortcuts">
+        <button type="button" data-demo-panel="notes">▤ Open Notes</button>
+        <button type="button" data-demo-panel="hub">⊞ Open Hub</button>
+        <button type="button" data-demo-panel="shield">◈ Open Shield</button>
+        <button type="button" data-demo-panel="explore">⌕ Explore</button>
+      </div>
+    </div>
+  `;
   demoPage.setAttribute('aria-labelledby', 'demo-tab-home');
 }
+
+function renderDemoNotes() {
+  if (demoPanel) demoPanel.hidden = true;
+  demo.classList.remove('panel-open');
+  demoPage.innerHTML = `
+    <div class="demo-tool-view">
+      <div class="demo-tool-banner">
+        <div class="demo-tool-title-row">
+          <span class="tool-tag">NEXUS NOTES · WORKSPACE</span>
+          <span class="demo-watermark-chip">THIS IS A DEMO · NOT THE ACTUAL BROWSER</span>
+        </div>
+        <h4>Scratchpad & Research Capture</h4>
+      </div>
+      <div class="demo-notes-workspace">
+        <div class="demo-notes-toolbar">
+          <input type="text" class="demo-note-title" value="Project Blueprint & Thoughts" aria-label="Note Title">
+          <div class="demo-format-buttons">
+            <button type="button" data-note-fmt="bold" title="Bold"><b>B</b></button>
+            <button type="button" data-note-fmt="italic" title="Italic"><i>I</i></button>
+            <button type="button" data-note-fmt="check" title="Checkbox">☑ Task</button>
+            <button type="button" class="demo-export-btn" data-note-export title="Copy to clipboard">Export</button>
+          </div>
+        </div>
+        <textarea class="demo-note-editor" aria-label="Demo Notes Editor" placeholder="Type quick notes, ideas, or references here...">• Researching decentralized consensus models
+• Reviewing UI latency budgets for NEXUS Core
+• Check web aesthetics across high-contrast display profiles</textarea>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:9px; color:#8c97b0;">
+          <span id="demoNoteStatus">Local simulated scratchpad · Interactive</span>
+          <span class="demo-watermark-chip" style="font-size:7.5px;">DEMO PREVIEW</span>
+        </div>
+      </div>
+    </div>
+  `;
+  demoPage.setAttribute('aria-labelledby', 'demo-tab-notes');
+}
+
+function renderDemoShield() {
+  if (demoPanel) demoPanel.hidden = true;
+  demo.classList.remove('panel-open');
+  demoPage.innerHTML = `
+    <div class="demo-tool-view">
+      <div class="demo-tool-banner">
+        <div class="demo-tool-title-row">
+          <span class="tool-tag">NEXUS SHIELD · PRIVACY ENGINE</span>
+          <span class="demo-watermark-chip">THIS IS A DEMO · NOT THE ACTUAL BROWSER</span>
+        </div>
+        <h4>Real-time Telemetry & Protection Controls</h4>
+      </div>
+      <div class="demo-shield-dashboard">
+        <div class="shield-stat-row">
+          <div class="shield-stat-box">
+            <span class="stat-number" id="demoShieldTrackers">142</span>
+            <span class="stat-label">Trackers Blocked</span>
+          </div>
+          <div class="shield-stat-box">
+            <span class="stat-number" id="demoShieldAds">38</span>
+            <span class="stat-label">Scripts Contained</span>
+          </div>
+          <div class="shield-stat-box">
+            <span class="stat-status" id="demoShieldStatus">ACTIVE</span>
+            <span class="stat-label">Engine Status</span>
+          </div>
+        </div>
+        <div class="shield-toggle-list">
+          <label class="shield-toggle-row">
+            <div>
+              <strong>Fingerprint Randomization</strong>
+              <small>Mask canvas, WebGL and audio entropy</small>
+            </div>
+            <input type="checkbox" class="shield-switch" checked data-shield-toggle="fingerprint">
+          </label>
+          <label class="shield-toggle-row">
+            <div>
+              <strong>Strict Tracker Prevention</strong>
+              <small>Block cross-site telemetry and pixel beacons</small>
+            </div>
+            <input type="checkbox" class="shield-switch" checked data-shield-toggle="tracker">
+          </label>
+          <label class="shield-toggle-row">
+            <div>
+              <strong>HTTPS Upgrade Enforcement</strong>
+              <small>Automatically redirect all insecure connections</small>
+            </div>
+            <input type="checkbox" class="shield-switch" checked data-shield-toggle="https">
+          </label>
+        </div>
+      </div>
+    </div>
+  `;
+  demoPage.setAttribute('aria-labelledby', 'demo-tab-shield');
+}
+
+function renderDemoHub() {
+  if (demoPanel) demoPanel.hidden = true;
+  demo.classList.remove('panel-open');
+  demoPage.innerHTML = `
+    <div class="demo-tool-view">
+      <div class="demo-tool-banner">
+        <div class="demo-tool-title-row">
+          <span class="tool-tag">NEXUS HUB · UNIFIED DASHBOARD</span>
+          <span class="demo-watermark-chip">THIS IS A DEMO · NOT THE ACTUAL BROWSER</span>
+        </div>
+        <h4>Central Switchboard for Workspaces & Tools</h4>
+      </div>
+      <div class="demo-hub-dashboard">
+        <div class="demo-hub-grid">
+          <div class="demo-hub-card" data-demo-panel="notes">
+            <span class="card-icon">▤</span>
+            <h5>NEXUS Notes</h5>
+            <p>Instant scratchpad, inline clipping & quick thoughts</p>
+            <button type="button" class="hub-action-btn">Launch Notes →</button>
+          </div>
+          <div class="demo-hub-card" data-demo-panel="shield">
+            <span class="card-icon">◈</span>
+            <h5>NEXUS Shield</h5>
+            <p>Zero-telemetry privacy shield & tracker containment</p>
+            <button type="button" class="hub-action-btn">Open Shield →</button>
+          </div>
+          <div class="demo-hub-card" data-demo-panel="explore">
+            <span class="card-icon">⌕</span>
+            <h5>NEXUS Explore</h5>
+            <p>Real-time page intelligence, definitions & conversions</p>
+            <button type="button" class="hub-action-btn">Inspect Explore →</button>
+          </div>
+          <div class="demo-hub-card" data-demo-action="connect">
+            <span class="card-icon">⊞</span>
+            <h5>NEXUS Connect</h5>
+            <p>Unified launcher for communication & web apps</p>
+            <button type="button" class="hub-action-btn">View Connect →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  demoPage.setAttribute('aria-labelledby', 'demo-tab-hub');
+}
+
+function renderDemoExplore() {
+  if (demoPanel) demoPanel.hidden = true;
+  demo.classList.remove('panel-open');
+  demoPage.innerHTML = `
+    <div class="demo-tool-view">
+      <div class="demo-tool-banner">
+        <div class="demo-tool-title-row">
+          <span class="tool-tag">NEXUS EXPLORE · CONTEXT ENGINE</span>
+          <span class="demo-watermark-chip">THIS IS A DEMO · NOT THE ACTUAL BROWSER</span>
+        </div>
+        <h4>Intelligent Context & On-Page Analysis</h4>
+      </div>
+      <div class="demo-explore-dashboard">
+        <div class="explore-card-item">
+          <div class="explore-head">
+            <span>TERM DEFINITION</span>
+            <span>AI CONTEXT</span>
+          </div>
+          <div class="explore-body">
+            <h5>Asynchronous Rust Pipelines</h5>
+            <p>Non-blocking concurrency abstractions designed for high-throughput network packet multiplexing with minimal memory overhead.</p>
+          </div>
+        </div>
+        <div class="explore-card-item">
+          <div class="explore-head">
+            <span>LIVE CONVERSION</span>
+            <span>ACTIVE UNIT</span>
+          </div>
+          <div class="explore-calc">
+            <strong>144 Hz @ 4K</strong>
+            <span class="calc-arrow">➔</span>
+            <span>11.94 Gbps Bandwidth Required</span>
+          </div>
+        </div>
+        <div class="explore-card-item">
+          <div class="explore-head">
+            <span>SECURITY RATING</span>
+            <span style="color:#22c55e;">A+ GRADE</span>
+          </div>
+          <div class="explore-body">
+            <h5>TLS 1.3 / Post-Quantum Cipher Ready</h5>
+            <p>X25519Kyber768 hybrid key encapsulation detected. Perfect forward secrecy guaranteed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  demoPage.setAttribute('aria-labelledby', 'demo-tab-explore');
+}
+
 function renderDemoMessage(title, message) {
-  demoPanel.hidden = true;
+  if (demoPanel) demoPanel.hidden = true;
   demo.classList.remove('panel-open');
   demoPage.replaceChildren();
   const messageBox = document.createElement('div');
   messageBox.className = 'demo-message';
-  const eyebrow = document.createElement('p'); eyebrow.className = 'eyebrow'; eyebrow.textContent = 'SIMULATED · NO LIVE WEB ACCESS';
-  const heading = document.createElement('h3'); heading.textContent = title;
-  const copy = document.createElement('p'); copy.textContent = message;
-  const homeButton = document.createElement('button'); homeButton.type = 'button'; homeButton.dataset.demoAction = 'home'; homeButton.textContent = 'Return to demo home';
-  messageBox.append(eyebrow, heading, copy, homeButton); demoPage.append(messageBox);
+
+  const badgeRow = document.createElement('div');
+  badgeRow.className = 'demo-home-badge-row';
+  const chip = document.createElement('span');
+  chip.className = 'demo-watermark-chip';
+  chip.textContent = 'THIS IS A DEMO · NOT THE ACTUAL BROWSER';
+  badgeRow.appendChild(chip);
+
+  const eyebrow = document.createElement('p');
+  eyebrow.className = 'eyebrow';
+  eyebrow.textContent = 'SIMULATED · NO LIVE WEB ACCESS';
+
+  const heading = document.createElement('h3');
+  heading.textContent = title;
+
+  const copy = document.createElement('p');
+  copy.textContent = message;
+
+  const homeButton = document.createElement('button');
+  homeButton.type = 'button';
+  homeButton.dataset.demoAction = 'home';
+  homeButton.textContent = 'Return to demo home';
+
+  messageBox.append(badgeRow, eyebrow, heading, copy, homeButton);
+  demoPage.append(messageBox);
 }
+
 function openDemoTool(name) {
-  const item = demoTools[name];
-  if (!item) return;
-  demoPanel.hidden = false;
-  demo.classList.add('panel-open');
-  demoToolTitle.textContent = item[0];
-  demoToolContent.innerHTML = item[1];
-  // Keep demoPage labelled by the selected demo tab while the tool panel is open.
+  if (!name) return;
+  selectDemoTab(name);
 }
+
 function closeDemoTool() {
-  demoPanel.hidden = true;
+  if (demoPanel) demoPanel.hidden = true;
   demo.classList.remove('panel-open');
   selectDemoTab('home');
 }
+
 demo.addEventListener('click', event => {
   const toolButton = event.target.closest('[data-demo-panel]');
-  if (toolButton) openDemoTool(toolButton.dataset.demoPanel);
-  if (event.target.closest('[data-close-demo-panel]')) closeDemoTool();
-  if (event.target.closest('[data-demo-action="home"]')) selectDemoTab('home');
+  if (toolButton) {
+    selectDemoTab(toolButton.dataset.demoPanel);
+    return;
+  }
+  if (event.target.closest('[data-close-demo-panel]')) {
+    closeDemoTool();
+    return;
+  }
+  if (event.target.closest('[data-demo-action="home"]')) {
+    selectDemoTab('home');
+    return;
+  }
+  const connectAction = event.target.closest('[data-demo-action="connect"]');
+  if (connectAction) {
+    document.querySelector('#connect')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+    return;
+  }
+
+  // Notes formatting button handler
+  const fmtBtn = event.target.closest('[data-note-fmt]');
+  if (fmtBtn) {
+    const editor = demo.querySelector('.demo-note-editor');
+    const status = demo.querySelector('#demoNoteStatus');
+    if (editor) {
+      const fmt = fmtBtn.dataset.noteFmt;
+      if (fmt === 'bold') editor.value += '\n**Bold idea:** ';
+      else if (fmt === 'italic') editor.value += '\n*Annotated:* ';
+      else if (fmt === 'check') editor.value += '\n[ ] Pending verification';
+      editor.focus();
+      if (status) status.textContent = 'Note updated · Local concept scratchpad';
+    }
+    return;
+  }
+
+  // Notes export handler
+  if (event.target.closest('[data-note-export]')) {
+    const editor = demo.querySelector('.demo-note-editor');
+    const status = demo.querySelector('#demoNoteStatus');
+    if (editor && navigator.clipboard) {
+      navigator.clipboard.writeText(editor.value).then(() => {
+        if (status) status.textContent = 'Copied to clipboard! (Simulated)';
+      }).catch(() => {
+        if (status) status.textContent = 'Exported to buffer (Demo)';
+      });
+    } else if (status) {
+      status.textContent = 'Exported to buffer (Demo)';
+    }
+    return;
+  }
 });
+
+// Shield switch toggles change handler
+demo.addEventListener('change', event => {
+  const shieldSwitch = event.target.closest('[data-shield-toggle]');
+  if (shieldSwitch) {
+    const allSwitches = [...demo.querySelectorAll('[data-shield-toggle]')];
+    const anyChecked = allSwitches.some(s => s.checked);
+    const allChecked = allSwitches.every(s => s.checked);
+    const statusEl = demo.querySelector('#demoShieldStatus');
+    if (statusEl) {
+      if (allChecked) {
+        statusEl.textContent = 'ACTIVE';
+        statusEl.style.color = '#22c55e';
+      } else if (anyChecked) {
+        statusEl.textContent = 'PARTIAL';
+        statusEl.style.color = '#eab308';
+      } else {
+        statusEl.textContent = 'PAUSED';
+        statusEl.style.color = '#ef4444';
+      }
+    }
+  }
+});
+
 demoModeSelect.addEventListener('change', () => setMode(demoModeSelect.value));
 let previousAboutFocus = null;
 function openAboutPanel() {
@@ -346,7 +645,12 @@ demoSearch.addEventListener('submit', event => {
   event.preventDefault();
   const query = demoAddress.value.trim();
   if (!query) { demoAddress.focus(); return; }
-  if (query.toLowerCase() === 'nexus://about') { openAboutPanel(); return; }
+  const clean = query.toLowerCase().replace(/^nexus:\/\//, '').trim();
+  if (clean === 'about') { openAboutPanel(); return; }
+  if (['home', 'notes', 'hub', 'shield', 'explore'].includes(clean)) {
+    selectDemoTab(clean);
+    return;
+  }
   renderDemoMessage('A simulated result', `“${query}” is only shown as text in this concept demo. NEXUS does not perform a web search here.`);
 });
 demo.addEventListener('click', event => {
