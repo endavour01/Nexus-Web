@@ -42,8 +42,13 @@ function setMode(mode, persist = true) {
   currentMode = mode;
   const item = modes[mode];
   body.dataset.mode = mode;
-  const demoModeControl = document.querySelector('#demoMode');
-  if (demoModeControl) demoModeControl.value = mode;
+  const demoModeLabel = document.querySelector('#demoModeLabel');
+  if (demoModeLabel) demoModeLabel.textContent = mode.toUpperCase();
+  document.querySelectorAll('.demo-mode-opt').forEach(opt => {
+    const isSelected = opt.dataset.modeVal === mode;
+    opt.classList.toggle('active', isSelected);
+    opt.setAttribute('aria-selected', String(isSelected));
+  });
   document.querySelectorAll('[data-mode-logo]').forEach(logo => { logo.src = item.logo; });
   buttons.forEach(button => {
     const selected = button.dataset.mode === mode;
@@ -256,7 +261,8 @@ const demoTabs = [...document.querySelectorAll('[data-demo-tab]')];
 const demoPanel = document.querySelector('#demoToolPanel');
 const demoToolTitle = document.querySelector('#demoToolTitle');
 const demoToolContent = document.querySelector('#demoToolContent');
-const demoModeSelect = document.querySelector('#demoMode');
+const demoModeTrigger = document.querySelector('#demoModeTrigger');
+const demoModeMenu = document.querySelector('#demoModeMenu');
 const demoSearch = document.querySelector('#demoSearch');
 const demoAddress = document.querySelector('#demoAddressInput');
 function selectDemoTab(name) {
@@ -614,7 +620,51 @@ demo.addEventListener('change', event => {
   }
 });
 
-demoModeSelect?.addEventListener('change', () => setMode(demoModeSelect.value));
+if (demoModeTrigger && demoModeMenu) {
+  demoModeTrigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const expanded = demoModeTrigger.getAttribute('aria-expanded') === 'true';
+    demoModeTrigger.setAttribute('aria-expanded', String(!expanded));
+    demoModeMenu.hidden = expanded;
+  });
+
+  demoModeMenu.querySelectorAll('.demo-mode-opt').forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const val = opt.dataset.modeVal;
+      setMode(val);
+      demoModeTrigger.setAttribute('aria-expanded', 'false');
+      demoModeMenu.hidden = true;
+      demoModeTrigger.focus();
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.demo-mode-dropdown')) {
+      demoModeTrigger.setAttribute('aria-expanded', 'false');
+      demoModeMenu.hidden = true;
+    }
+  });
+
+  demoModeTrigger.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      demoModeTrigger.setAttribute('aria-expanded', 'true');
+      demoModeMenu.hidden = false;
+      demoModeMenu.querySelector('.demo-mode-opt.active')?.focus();
+    }
+  });
+
+  demoModeMenu.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      demoModeTrigger.setAttribute('aria-expanded', 'false');
+      demoModeMenu.hidden = true;
+      demoModeTrigger.focus();
+    }
+  });
+}
+
 let previousAboutFocus = null;
 function openAboutPanel() {
   closeCommandPalette();
@@ -641,7 +691,6 @@ demoSearch.addEventListener('submit', event => {
 demo.addEventListener('click', event => {
   if (event.target.closest('.demo-reset')) {
     demoSearch.reset();
-    demoModeSelect.value = 'default';
     setMode('default');
     selectDemoTab('home');
     demoAddress.value = '';
